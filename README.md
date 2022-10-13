@@ -1,2 +1,2 @@
-# MusicBot
+# SIGameBot
 CSharpIsBetter
