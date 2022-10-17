@@ -1,22 +1,37 @@
-package musicbot;
+package SiGameBot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class bot extends TelegramLongPollingBot {
+
+    int messageId;
+
     @Override
     public void onUpdateReceived(Update update) {
-        // Обработка команд
+        // Тестовая программа
+        /*
+        if(update.hasMessage() && update.getMessage().getText().equals("test")){
+            long chatId = update.getMessage().getChatId();
+            messageId = sendMessage("Test", chatId);
+            if(messageId == -1) System.out.print("Error");
+        }
+        if(update.hasMessage() && update.getMessage().getText().equals("edit")){
+            long chatId = update.getMessage().getChatId();
+            if(editMessage("Test2", chatId, messageId) == -1) System.out.print("Error");
+        }
+        if(update.hasMessage() && update.getMessage().getText().equals("delete")){
+            long chatId = update.getMessage().getChatId();
+            if(deleteMessage(chatId, messageId) == -1) System.out.print("Error");
+        }*/
     }
 
     @Override
@@ -30,18 +45,18 @@ public class bot extends TelegramLongPollingBot {
     }
 
     // Отправка сообщений
-    public boolean sendMessage(String text, long chatId){
+    public int sendMessage(String text, long chatId){
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
         try {
-            execute(message);
+            return execute(message).getMessageId();
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
-    public boolean sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons){
+    public int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons){
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
@@ -49,39 +64,39 @@ public class bot extends TelegramLongPollingBot {
         keyboard.setKeyboard(buttons);
         message.setReplyMarkup(keyboard);
         try {
-            execute(message);
+            return execute(message).getMessageId();
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
     }
-    public boolean sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
+    public int sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
         message.setReplyMarkup(keyboard);
         try {
-            execute(message);
+            return execute(message).getMessageId();
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
 
     // Редактирование сообщения
-    public boolean editMessage(String text, long chatId, int messageId){
+    public int editMessage(String text, long chatId, int messageId){
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
         message.setMessageId(messageId);
         try {
             execute(message);
+            return 0;
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
-    public boolean editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons){
+    public int editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons){
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
@@ -91,12 +106,13 @@ public class bot extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboard);
         try {
             execute(message);
+            return 0;
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
-    public boolean editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
+    public int editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
@@ -104,23 +120,25 @@ public class bot extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboard);
         try {
             execute(message);
+            return 0;
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
 
     // Удаление сообщения
-    public boolean deleteMessage(long chatId, int messageId){
+    public int deleteMessage(long chatId, int messageId){
         DeleteMessage message = new DeleteMessage();
         message.setChatId(chatId);
         message.setMessageId(messageId);
         try {
             execute(message);
+            return 0;
         } catch (TelegramApiException e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
 }
 
