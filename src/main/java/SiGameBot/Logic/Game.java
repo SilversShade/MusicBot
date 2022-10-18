@@ -1,22 +1,22 @@
 package SiGameBot.Logic;
 
-import SiGameBot.Bot;
+import SiGameBot.SigameBot;
 
 import java.util.ArrayList;
 
 public class Game {
-    private final Bot bot;
+    private final SigameBot bot;
     private Player leading;
     private final ArrayList<Player> players = new ArrayList<>();
     private final String gameName;
     private final String password;
-    public Game(Bot bot, long leadingId, String gameName){
+    public Game(SigameBot bot, long leadingId, String gameName){
         this.gameName = gameName;
         this.bot = bot;
         this.password = "";
         this.leading = new Player("Ведущий", leadingId, this);
     }
-    public Game(Bot bot, long leadingId, String gameName, String password){
+    public Game(SigameBot bot, long leadingId, String gameName, String password){
         this.gameName = gameName;
         this.bot = bot;
         this.password = password;
