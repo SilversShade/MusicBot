@@ -11,24 +11,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
-public class bot extends TelegramLongPollingBot {
+public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
-        // Тестовая программа
-        /*
-        if(update.hasMessage() && update.getMessage().getText().equals("test")){
-            long chatId = update.getMessage().getChatId();
-            messageId = sendMessage("Test", chatId);
-            if(messageId == -1) System.out.print("Error");
-        }
-        if(update.hasMessage() && update.getMessage().getText().equals("edit")){
-            long chatId = update.getMessage().getChatId();
-            if(editMessage("Test2", chatId, messageId) == -1) System.out.print("Error");
-        }
-        if(update.hasMessage() && update.getMessage().getText().equals("delete")){
-            long chatId = update.getMessage().getChatId();
-            if(deleteMessage(chatId, messageId) == -1) System.out.print("Error");
-        }*/
     }
 
     @Override
@@ -38,7 +23,7 @@ public class bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "5723529211:AAFYshIIkyFwyTI7RhH_Vjkr9zl8bmJYJW8";
+        return System.getenv("botToken");
     }
 
     // Отправка сообщений
