@@ -1,44 +1,58 @@
 package SiGameBot;
 
+import SiGameBot.Commands.SigameBotCommand;
+import SiGameBot.Commands.StartCommand;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.inject.Singleton;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-public class bot extends TelegramLongPollingBot {
+@Singleton
+public class SigameBot extends TelegramLongPollingBot {
+
+    private static final String TOKEN = System.getenv("botToken");
+    private static final String NAME = "SIGame Bot";
+
+    private static Map<String, SigameBotCommand> commandMap;
+    public SigameBot() {
+        commandMap = Map.of("/start", new StartCommand("/start", "Краткое описание бота и список доступных команд", this));
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
-        // Тестовая программа
-        /*
-        if(update.hasMessage() && update.getMessage().getText().equals("test")){
-            long chatId = update.getMessage().getChatId();
-            messageId = sendMessage("Test", chatId);
-            if(messageId == -1) System.out.print("Error");
+        Message message = null;
+
+        if (update.hasMessage())
+            message = update.getMessage();
+
+        if(message != null && commandMap.containsKey(message.getText())) {
+            try {
+                commandMap.get(message.getText()).executeCommand(message.getChatId());
+            } catch (IOException e) {
+                this.sendMessage("Файл с текстом комманды не был найден", message.getChatId());
+                e.printStackTrace();
+            }
         }
-        if(update.hasMessage() && update.getMessage().getText().equals("edit")){
-            long chatId = update.getMessage().getChatId();
-            if(editMessage("Test2", chatId, messageId) == -1) System.out.print("Error");
-        }
-        if(update.hasMessage() && update.getMessage().getText().equals("delete")){
-            long chatId = update.getMessage().getChatId();
-            if(deleteMessage(chatId, messageId) == -1) System.out.print("Error");
-        }*/
     }
 
     @Override
     public String getBotUsername() {
-        return "SIGame";
+        return NAME;
     }
 
     @Override
     public String getBotToken() {
-        return "5723529211:AAFYshIIkyFwyTI7RhH_Vjkr9zl8bmJYJW8";
+        return TOKEN;
     }
 
     // Отправка сообщений
@@ -128,6 +142,7 @@ public class bot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setText(text);
         message.setChatId(chatId);
+        message.enableHtml(true);
         return message;
     }
     private EditMessageText createEditMessageObject(String text, long chatId, int messageId){
