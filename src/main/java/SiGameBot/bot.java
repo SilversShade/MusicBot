@@ -12,9 +12,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.List;
 
 public class bot extends TelegramLongPollingBot {
-
-    int messageId;
-
     @Override
     public void onUpdateReceived(Update update) {
         // Тестовая программа
@@ -46,9 +43,7 @@ public class bot extends TelegramLongPollingBot {
 
     // Отправка сообщений
     public int sendMessage(String text, long chatId){
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(text);
+        SendMessage message = createSendMessageObject(text, chatId);
         try {
             return execute(message).getMessageId();
         } catch (TelegramApiException e) {
@@ -57,9 +52,7 @@ public class bot extends TelegramLongPollingBot {
 
     }
     public int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons){
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(text);
+        SendMessage message = createSendMessageObject(text, chatId);
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         keyboard.setKeyboard(buttons);
         message.setReplyMarkup(keyboard);
@@ -70,9 +63,7 @@ public class bot extends TelegramLongPollingBot {
         }
     }
     public int sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(text);
+        SendMessage message = createSendMessageObject(text, chatId);
         message.setReplyMarkup(keyboard);
         try {
             return execute(message).getMessageId();
@@ -84,10 +75,7 @@ public class bot extends TelegramLongPollingBot {
 
     // Редактирование сообщения
     public int editMessage(String text, long chatId, int messageId){
-        EditMessageText message = new EditMessageText();
-        message.setChatId(chatId);
-        message.setText(text);
-        message.setMessageId(messageId);
+        EditMessageText message = createEditMessageObject(text, chatId, messageId);
         try {
             execute(message);
             return 0;
@@ -97,10 +85,7 @@ public class bot extends TelegramLongPollingBot {
 
     }
     public int editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons){
-        EditMessageText message = new EditMessageText();
-        message.setChatId(chatId);
-        message.setText(text);
-        message.setMessageId(messageId);
+        EditMessageText message = createEditMessageObject(text, chatId, messageId);
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         keyboard.setKeyboard(buttons);
         message.setReplyMarkup(keyboard);
@@ -113,10 +98,7 @@ public class bot extends TelegramLongPollingBot {
 
     }
     public int editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
-        EditMessageText message = new EditMessageText();
-        message.setChatId(chatId);
-        message.setText(text);
-        message.setMessageId(messageId);
+        EditMessageText message = createEditMessageObject(text, chatId, messageId);
         message.setReplyMarkup(keyboard);
         try {
             execute(message);
@@ -139,6 +121,21 @@ public class bot extends TelegramLongPollingBot {
             return -1;
         }
 
+    }
+
+    // Дополнительные методы
+    private SendMessage createSendMessageObject(String text, long chatId){
+        SendMessage message = new SendMessage();
+        message.setText(text);
+        message.setChatId(chatId);
+        return message;
+    }
+    private EditMessageText createEditMessageObject(String text, long chatId, int messageId){
+        EditMessageText message = new EditMessageText();
+        message.setChatId(chatId);
+        message.setText(text);
+        message.setMessageId(messageId);
+        return message;
     }
 }
 
