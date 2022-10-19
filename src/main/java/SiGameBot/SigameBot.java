@@ -69,9 +69,7 @@ public class SigameBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public String getBotToken() {
-        return TOKEN;
-    }
+    public String getBotToken() { return TOKEN; }
 
     // Отправка сообщений
     public int sendMessage(String text, long chatId){
