@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public abstract class SigameBotCommand extends BotCommand {
 
-    protected SigameBot bot;
+    protected final SigameBot bot;
 
     public SigameBotCommand(String command, String description, SigameBot bot) {
         super(command, description);
