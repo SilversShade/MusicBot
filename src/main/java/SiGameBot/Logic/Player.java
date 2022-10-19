@@ -11,4 +11,9 @@ public class Player {
         this.game = game;
         score = 0;
     }
+    public Player(String name, long chatId){
+        this.name = name;
+        id = chatId;
+        score = 0;
+    }
 }

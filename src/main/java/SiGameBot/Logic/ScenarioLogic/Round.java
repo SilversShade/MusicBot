@@ -1,6 +1,6 @@
 package SiGameBot.Logic.ScenarioLogic;
 
-public class Scenario {
+public class Round {
     public String name;
-    public Round[] rounds;
+    public Category[] categories;
 }
