@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class FileReader {
+public class StreamReader {
     public static String readFromInputStream(InputStream inputStream) throws IOException {
         StringBuilder resultStringBuilder = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {

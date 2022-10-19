@@ -1,5 +1,6 @@
 package SiGameBot;
 
+import SiGameBot.Commands.BeginCommand;
 import SiGameBot.Commands.SigameBotCommand;
 import SiGameBot.Commands.StartCommand;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,8 +15,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.Math.toIntExact;
 
 @Singleton
 public class SigameBot extends TelegramLongPollingBot {
@@ -25,7 +29,10 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static Map<String, SigameBotCommand> commandMap;
     public SigameBot() {
-        commandMap = Map.of("/start", new StartCommand("/start", "Краткое описание бота и список доступных команд", this));
+        commandMap = Map.of("/start",
+                new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
+                "/begin",
+                new BeginCommand("/begin", "Начало игры", this));
     }
 
     @Override
@@ -41,6 +48,17 @@ public class SigameBot extends TelegramLongPollingBot {
             } catch (IOException e) {
                 this.sendMessage("Файл с текстом комманды не был найден", message.getChatId());
                 e.printStackTrace();
+            }
+        }
+        else if (update.hasCallbackQuery()) {
+            var callData = update.getCallbackQuery().getData();
+            var messageId = update.getCallbackQuery().getMessage().getMessageId();
+            var chatId = update.getCallbackQuery().getMessage().getChatId();
+
+            var parsedData = callData.split(" ");
+            if (parsedData[0].equals("testselect")) {
+                this.deleteMessage(chatId, messageId);
+                // вот тут надо вызывать парсер теста с номером parsedData[1] и запускать сам тест
             }
         }
     }
