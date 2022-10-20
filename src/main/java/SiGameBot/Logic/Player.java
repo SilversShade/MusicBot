@@ -5,7 +5,7 @@ public class Player {
     public long id;
     public int score;
     public Game game;
-    private GameDisplay gameDisplay;
+    public final GameDisplay gameDisplay;
     public Player(String name, long chatId, Game game){
         this.name = name;
         id = chatId;
