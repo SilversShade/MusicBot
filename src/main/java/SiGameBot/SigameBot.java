@@ -3,6 +3,9 @@ package SiGameBot;
 import SiGameBot.Commands.BeginCommand;
 import SiGameBot.Commands.SigameBotCommand;
 import SiGameBot.Commands.StartCommand;
+import SiGameBot.GameDisplaying.TelegramGameDisplay;
+import SiGameBot.Logic.SoloGame;
+import SiGameBot.Utilities.JsonParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -16,6 +19,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +30,8 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
+
+    private SoloGame ongoingSoloGame;
 
     private static Map<String, SigameBotCommand> commandMap;
     public SigameBot() {
@@ -46,7 +52,7 @@ public class SigameBot extends TelegramLongPollingBot {
             try {
                 commandMap.get(message.getText()).executeCommand(message.getChatId());
             } catch (IOException e) {
-                this.sendMessage("Файл с текстом комманды не был найден", message.getChatId());
+                this.sendMessage("При обработке команды произошла ошибка", message.getChatId());
                 e.printStackTrace();
             }
         }
@@ -58,8 +64,14 @@ public class SigameBot extends TelegramLongPollingBot {
             var parsedData = callData.split(" ");
             if (parsedData[0].equals("testselect")) {
                 this.deleteMessage(chatId, messageId);
-                // вот тут надо вызывать парсер теста с номером parsedData[1] и запускать сам тест
+                this.ongoingSoloGame = new SoloGame(this,
+                        chatId,
+                        JsonParser.getGameFromJson(Integer.parseInt(parsedData[1])),
+                        new TelegramGameDisplay(this, chatId));
+                this.ongoingSoloGame.start();
             }
+            if (parsedData[0].equals("solo"))
+                this.ongoingSoloGame.nextQuestion(callData);
         }
     }
 
