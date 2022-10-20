@@ -33,7 +33,7 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void updateGameStateView(Question currentQuestion, Player player) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
-        List<InlineKeyboardButton> row = null;
+        List<InlineKeyboardButton> row = new ArrayList<>();
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             var option = new InlineKeyboardButton();
             option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));

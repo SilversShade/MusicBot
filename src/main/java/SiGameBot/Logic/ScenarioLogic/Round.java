@@ -1,6 +1,8 @@
 package SiGameBot.Logic.ScenarioLogic;
 
+import java.util.ArrayList;
+
 public class Round {
     public String name;
-    public Category[] categories;
+    public ArrayList<Category> categories;
 }
