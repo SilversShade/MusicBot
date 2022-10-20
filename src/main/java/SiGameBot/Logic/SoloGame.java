@@ -24,9 +24,25 @@ public class SoloGame {
 
     public void nextQuestion(String playerResponse) {
         if (currentQuestion == 0) {
-            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion));
+            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+            currentQuestion++;
             return;
         }
+
+        var callbackData = playerResponse.split(" ");
+
+        var previousQuestion = this.scenario.questions.get(currentQuestion-1);
+        if (callbackData[2].equals(previousQuestion.correctAnswer))
+            this.player.score += previousQuestion.cost;
+        else this.player.score -= previousQuestion.cost;
+
+        if (currentQuestion == this.scenario.questions.size()) {
+            this.gameDisplay.displayEndgameMessage(player);
+            return;
+        }
+
+        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+        currentQuestion++;
 
     }
 }

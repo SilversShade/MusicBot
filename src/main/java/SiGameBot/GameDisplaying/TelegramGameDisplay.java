@@ -1,5 +1,6 @@
 package SiGameBot.GameDisplaying;
 
+import SiGameBot.Logic.Player;
 import SiGameBot.Logic.ScenarioLogic.Question;
 import SiGameBot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -30,10 +31,10 @@ public class TelegramGameDisplay implements IGameDisplay{
     }
 
     @Override
-    public void updateGameStateView(Question currentQuestion) {
+    public void updateGameStateView(Question currentQuestion, Player player) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
         List<InlineKeyboardButton> row = null;
-        for (var i=0; i<currentQuestion.answerOptions.size();i++) {
+        for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             var option = new InlineKeyboardButton();
             option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));
             option.setCallbackData("solo answer " + currentQuestion.answerOptions.get(i));
@@ -48,9 +49,17 @@ public class TelegramGameDisplay implements IGameDisplay{
                 + ".\n\n"
                 + currentQuestion.questionTitle
                 + "\n"
-                + currentQuestion.questionDescription,
+                + currentQuestion.questionDescription
+                + "\n\n"
+                + "Текущее количество очков игрока: "
+                + player.score,
                 chatId,
                 messageId,
                 answerOptionsButtons);
+    }
+
+    @Override
+    public void displayEndgameMessage(Player player) {
+        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
     }
 }
