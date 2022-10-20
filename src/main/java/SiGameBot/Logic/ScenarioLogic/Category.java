@@ -1,6 +1,13 @@
 package SiGameBot.Logic.ScenarioLogic;
 
+import java.util.ArrayList;
+
 public class Category {
     public String name;
-    public Question[] questions;
+    public ArrayList<Question> questions;
+
+    public Category(String name, ArrayList<Question> questions) {
+        this.name = name;
+        this.questions = questions;
+    }
 }

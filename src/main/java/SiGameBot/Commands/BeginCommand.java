@@ -27,7 +27,7 @@ public class BeginCommand extends SigameBotCommand {
         for (var i = 0; i < tests.size(); i++) {
             var button = new InlineKeyboardButton();
             button.setText(String.format("%d. %s", i + 1, FilenameUtils.removeExtension(tests.get(i).getName())));
-            button.setCallbackData("testselect " + Integer.toString(i+1));
+            button.setCallbackData("testselect " + (i+1));
             buttons.add(List.of(button));
         }
 
