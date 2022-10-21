@@ -9,12 +9,9 @@ import java.util.Map;
 public class SoloGame {
     private final Category scenario;
     private final Player player;
-
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
-
     private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
-
     public SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay){
         player = new Player("player", chatId);
         this.scenario = scenario;
