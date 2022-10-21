@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,7 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
-
-    private SoloGame ongoingSoloGame;
+    Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
 
     private static Map<String, SigameBotCommand> commandMap;
     public SigameBot() {
@@ -60,13 +60,16 @@ public class SigameBot extends TelegramLongPollingBot {
             var parsedData = callData.split(" ");
             if (parsedData[0].equals("testselect")) {
                 this.deleteMessage(chatId, messageId);
-                this.ongoingSoloGame = new SoloGame(chatId,
+                this.ongoingSoloGames.put(chatId, new SoloGame(chatId,
                         JsonParser.getGameFromJson(Integer.parseInt(parsedData[1])),
-                        new TelegramGameDisplay(this, chatId));
-                this.ongoingSoloGame.start();
+                        new TelegramGameDisplay(this, chatId)));
+                this.ongoingSoloGames.get(chatId).start();
             }
             if (parsedData[0].equals("solo"))
-                this.ongoingSoloGame.nextQuestion(callData);
+            {
+                parsedData = callData.split(" ", 2);
+                this.ongoingSoloGames.get(chatId).nextQuestion(parsedData[1]);
+            }
         }
     }
 
@@ -174,6 +177,9 @@ public class SigameBot extends TelegramLongPollingBot {
         message.setText(text);
         message.setMessageId(messageId);
         return message;
+    }
+    public void deleteOngoingSoloGame(long key){
+        ongoingSoloGames.remove(key);
     }
 }
 

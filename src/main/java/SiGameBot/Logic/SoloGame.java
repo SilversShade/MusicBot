@@ -26,10 +26,8 @@ public class SoloGame {
             return;
         }
 
-        var callbackData = playerResponse.split(" ");
-
         var previousQuestion = this.scenario.questions.get(currentQuestion-1);
-        if (callbackData[2].equals(previousQuestion.correctAnswer))
+        if (playerResponse.equals(previousQuestion.correctAnswer))
             this.player.score += previousQuestion.cost;
         else this.player.score -= previousQuestion.cost;
 
