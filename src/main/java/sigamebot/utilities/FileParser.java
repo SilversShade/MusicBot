@@ -1,4 +1,4 @@
-package SiGameBot.Utilities;
+package sigamebot.utilities;
 
 import java.io.File;
 import java.util.Arrays;

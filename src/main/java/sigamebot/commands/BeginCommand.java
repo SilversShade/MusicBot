@@ -1,7 +1,7 @@
-package SiGameBot.Commands;
+package sigamebot.commands;
 
-import SiGameBot.SigameBot;
-import SiGameBot.Utilities.FileParser;
+import sigamebot.SigameBot;
+import sigamebot.utilities.FileParser;
 import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 

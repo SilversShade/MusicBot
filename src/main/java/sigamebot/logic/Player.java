@@ -1,4 +1,4 @@
-package SiGameBot.Logic;
+package sigamebot.logic;
 
 public class Player {
     public String name;
