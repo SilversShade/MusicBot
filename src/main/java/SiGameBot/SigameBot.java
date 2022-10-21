@@ -27,7 +27,7 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
-    Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
+    private Map<Long, SoloGame> ongoingSoloGames;
 
     private static Map<String, SigameBotCommand> commandMap;
     public SigameBot() {
@@ -35,6 +35,7 @@ public class SigameBot extends TelegramLongPollingBot {
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
                 "/begin",
                 new BeginCommand("/begin", "Начало игры", this));
+        ongoingSoloGames = new HashMap<>();
     }
 
     @Override
@@ -178,8 +179,8 @@ public class SigameBot extends TelegramLongPollingBot {
         message.setMessageId(messageId);
         return message;
     }
-    public void deleteOngoingSoloGame(long key){
-        ongoingSoloGames.remove(key);
+    public void deleteOngoingSoloGame(long chatId){
+        ongoingSoloGames.remove(chatId);
     }
 }
 
