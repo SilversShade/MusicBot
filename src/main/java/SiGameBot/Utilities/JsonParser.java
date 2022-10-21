@@ -28,8 +28,8 @@ public class JsonParser {
             for(var i = 0; i < jsonQuestions.size(); i++){
                 var optionAnswers = new ArrayList<String>();
                 JSONArray jsonAnswers = (JSONArray)((JSONObject)jsonQuestions.get(i)).get("options");
-                for(var j = 0; j < jsonAnswers.size(); j++){
-                    optionAnswers.add((String)jsonAnswers.get(j));
+                for (Object jsonAnswer : jsonAnswers) {
+                    optionAnswers.add((String) jsonAnswer);
                 }
                 Question question = new Question(i,
                         ((Long)((JSONObject)jsonQuestions.get(i)).get("points")).intValue(),

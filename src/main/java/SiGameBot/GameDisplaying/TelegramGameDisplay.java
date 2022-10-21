@@ -61,5 +61,6 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void displayEndgameMessage(Player player) {
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
+        this.bot.deleteOngoingSoloGame(chatId);
     }
 }
