@@ -1,7 +1,7 @@
-package SiGameBot.Utilities;
+package sigamebot.utilities;
 
-import SiGameBot.Logic.ScenarioLogic.Category;
-import SiGameBot.Logic.ScenarioLogic.Question;
+import sigamebot.logic.scenariologic.Category;
+import sigamebot.logic.scenariologic.Question;
 import org.json.simple.*;
 import org.json.simple.JSONValue;
 

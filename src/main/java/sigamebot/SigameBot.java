@@ -1,11 +1,11 @@
-package SiGameBot;
+package sigamebot;
 
-import SiGameBot.Commands.BeginCommand;
-import SiGameBot.Commands.SigameBotCommand;
-import SiGameBot.Commands.StartCommand;
-import SiGameBot.GameDisplaying.TelegramGameDisplay;
-import SiGameBot.Logic.SoloGame;
-import SiGameBot.Utilities.JsonParser;
+import sigamebot.commands.BeginCommand;
+import sigamebot.commands.SigameBotCommand;
+import sigamebot.commands.StartCommand;
+import sigamebot.gamedisplaying.TelegramGameDisplay;
+import sigamebot.logic.SoloGame;
+import sigamebot.utilities.JsonParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;

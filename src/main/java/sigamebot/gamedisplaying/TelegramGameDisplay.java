@@ -1,9 +1,9 @@
-package SiGameBot.GameDisplaying;
+package sigamebot.gamedisplaying;
 
-import SiGameBot.Logic.Player;
-import SiGameBot.Logic.ScenarioLogic.Question;
-import SiGameBot.Logic.SoloGame;
-import SiGameBot.SigameBot;
+import sigamebot.logic.Player;
+import sigamebot.logic.scenariologic.Question;
+import sigamebot.logic.SoloGame;
+import sigamebot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;

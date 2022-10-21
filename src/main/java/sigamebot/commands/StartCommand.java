@@ -1,7 +1,7 @@
-package SiGameBot.Commands;
+package sigamebot.commands;
 
-import SiGameBot.SigameBot;
-import SiGameBot.Utilities.StreamReader;
+import sigamebot.SigameBot;
+import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;
 import java.io.FileInputStream;

@@ -1,7 +1,7 @@
-package SiGameBot.Logic;
+package sigamebot.logic;
 
-import SiGameBot.GameDisplaying.IGameDisplay;
-import SiGameBot.Logic.ScenarioLogic.Category;
+import sigamebot.gamedisplaying.IGameDisplay;
+import sigamebot.logic.scenariologic.Category;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package SiGameBot.Logic.ScenarioLogic;
+package sigamebot.logic.scenariologic;
 
 public class Scenario {
     public String name;
