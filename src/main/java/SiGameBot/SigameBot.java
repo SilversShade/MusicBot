@@ -18,12 +18,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.Math.toIntExact;
 
 @Singleton
 public class SigameBot extends TelegramLongPollingBot {
@@ -64,8 +60,7 @@ public class SigameBot extends TelegramLongPollingBot {
             var parsedData = callData.split(" ");
             if (parsedData[0].equals("testselect")) {
                 this.deleteMessage(chatId, messageId);
-                this.ongoingSoloGame = new SoloGame(this,
-                        chatId,
+                this.ongoingSoloGame = new SoloGame(chatId,
                         JsonParser.getGameFromJson(Integer.parseInt(parsedData[1])),
                         new TelegramGameDisplay(this, chatId));
                 this.ongoingSoloGame.start();

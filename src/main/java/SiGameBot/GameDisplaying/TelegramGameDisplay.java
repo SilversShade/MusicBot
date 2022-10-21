@@ -12,7 +12,7 @@ public class TelegramGameDisplay implements IGameDisplay{
 
     private final SigameBot bot;
 
-    private long chatId;
+    private final long chatId;
 
     private int messageId;
     public TelegramGameDisplay(SigameBot bot, long chatId) {
@@ -36,7 +36,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         List<InlineKeyboardButton> row = new ArrayList<>();
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             var option = new InlineKeyboardButton();
-            option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));
+            option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i).replace('_', ' ')));
             option.setCallbackData("solo answer " + currentQuestion.answerOptions.get(i));
             if (i%2 == 0)
                 row = new ArrayList<>();
@@ -45,7 +45,7 @@ public class TelegramGameDisplay implements IGameDisplay{
                 answerOptionsButtons.add(row);
         }
         this.bot.editMessage("Вопрос номер "
-                + currentQuestion.questionNumber
+                + (currentQuestion.questionNumber+1)
                 + ".\n\n"
                 + currentQuestion.questionTitle
                 + "\n"
