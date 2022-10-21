@@ -1,8 +1,9 @@
-package SiGameBot.GameDisplaying;
+package sigamebot.gamedisplaying;
 
-import SiGameBot.Logic.Player;
-import SiGameBot.Logic.ScenarioLogic.Question;
-import SiGameBot.SigameBot;
+import sigamebot.logic.Player;
+import sigamebot.logic.scenariologic.Question;
+import sigamebot.logic.SoloGame;
+import sigamebot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
@@ -61,6 +62,6 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void displayEndgameMessage(Player player) {
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
-        this.bot.deleteOngoingSoloGame(chatId);
+        SoloGame.getOngoingSoloGames().get(chatId).finish(chatId);
     }
 }

@@ -1,7 +1,7 @@
-package SiGameBot.Commands;
+package sigamebot.commands;
 
-import SiGameBot.SigameBot;
-import SiGameBot.Utilities.FileParser;
+import sigamebot.SigameBot;
+import sigamebot.utilities.FileParser;
 import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -17,7 +17,7 @@ public class BeginCommand extends SigameBotCommand {
 
     @Override
     public void executeCommand(long chatId) {
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/Tests");
+        var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
         if (tests.isEmpty()) {
             this.bot.sendMessage("Не найдено ни одного теста.", chatId);
             return;

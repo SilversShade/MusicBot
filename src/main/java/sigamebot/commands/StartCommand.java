@@ -1,7 +1,7 @@
-package SiGameBot.Commands;
+package sigamebot.commands;
 
-import SiGameBot.SigameBot;
-import SiGameBot.Utilities.StreamReader;
+import sigamebot.SigameBot;
+import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;
 import java.io.FileInputStream;
@@ -16,6 +16,6 @@ public class StartCommand extends SigameBotCommand{
     @Override
     public void executeCommand(long chatId) throws IOException {
         this.bot.sendMessage(StreamReader.readFromInputStream(
-                new FileInputStream("src/main/resources/CommandMessages/startcommandmessage.txt")), chatId);
+                new FileInputStream("src/main/resources/commandmessages/startcommandmessage.txt")), chatId);
     }
 }

@@ -1,7 +1,10 @@
-package SiGameBot.Logic;
+package sigamebot.logic;
 
-import SiGameBot.GameDisplaying.IGameDisplay;
-import SiGameBot.Logic.ScenarioLogic.Category;
+import sigamebot.gamedisplaying.IGameDisplay;
+import sigamebot.logic.scenariologic.Category;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SoloGame {
     private final Category scenario;
@@ -9,14 +12,26 @@ public class SoloGame {
 
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
+
+    private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
+
     public SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay){
         player = new Player("player", chatId);
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
         this.currentQuestion = 0;
     }
+
+    public static Map<Long, SoloGame> getOngoingSoloGames() {
+        return ongoingSoloGames;
+    }
+
     public void start(){
         this.gameDisplay.displayStartMessage();
+    }
+
+    public void finish(long chatId){
+        ongoingSoloGames.remove(chatId);
     }
 
     public void nextQuestion(String playerResponse) {

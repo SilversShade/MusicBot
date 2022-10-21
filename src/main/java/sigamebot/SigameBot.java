@@ -1,11 +1,11 @@
-package SiGameBot;
+package sigamebot;
 
-import SiGameBot.Commands.BeginCommand;
-import SiGameBot.Commands.SigameBotCommand;
-import SiGameBot.Commands.StartCommand;
-import SiGameBot.GameDisplaying.TelegramGameDisplay;
-import SiGameBot.Logic.SoloGame;
-import SiGameBot.Utilities.JsonParser;
+import sigamebot.commands.BeginCommand;
+import sigamebot.commands.SigameBotCommand;
+import sigamebot.commands.StartCommand;
+import sigamebot.gamedisplaying.TelegramGameDisplay;
+import sigamebot.logic.SoloGame;
+import sigamebot.utilities.JsonParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -18,7 +18,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
-    private final Map<Long, SoloGame> ongoingSoloGames;
 
     private static Map<String, SigameBotCommand> commandMap;
     public SigameBot() {
@@ -35,7 +33,6 @@ public class SigameBot extends TelegramLongPollingBot {
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
                 "/begin",
                 new BeginCommand("/begin", "Начало игры", this));
-        ongoingSoloGames = new HashMap<>();
     }
     @Override
     public void onUpdateReceived(Update update) {
@@ -60,15 +57,15 @@ public class SigameBot extends TelegramLongPollingBot {
             var parsedData = callData.split(" ");
             if (parsedData[0].equals("testselect")) {
                 this.deleteMessage(chatId, messageId);
-                this.ongoingSoloGames.put(chatId, new SoloGame(chatId,
+                SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                         JsonParser.getGameFromJson(Integer.parseInt(parsedData[1])),
                         new TelegramGameDisplay(this, chatId)));
-                this.ongoingSoloGames.get(chatId).start();
+                SoloGame.getOngoingSoloGames().get(chatId).start();
             }
             if (parsedData[0].equals("solo"))
             {
                 parsedData = callData.split(" ", 2);
-                this.ongoingSoloGames.get(chatId).nextQuestion(parsedData[1]);
+                SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
             }
         }
     }
@@ -177,8 +174,5 @@ public class SigameBot extends TelegramLongPollingBot {
         message.setText(text);
         message.setMessageId(messageId);
         return message;
-    }
-    public void deleteOngoingSoloGame(long chatId){
-        ongoingSoloGames.remove(chatId);
     }
 }

@@ -1,7 +1,7 @@
-package SiGameBot.Utilities;
+package sigamebot.utilities;
 
-import SiGameBot.Logic.ScenarioLogic.Category;
-import SiGameBot.Logic.ScenarioLogic.Question;
+import sigamebot.logic.scenariologic.Category;
+import sigamebot.logic.scenariologic.Question;
 import org.json.simple.*;
 import org.json.simple.JSONValue;
 
@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class JsonParser {
 
     public static Category getGameFromJson(int gameNumberInFolder){
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/Tests");
-        String path = "src/main/resources/Tests/" + tests.get(gameNumberInFolder).getName();
+        var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
+        String path = "src/main/resources/tests/" + tests.get(gameNumberInFolder).getName();
         String jsonString;
         JSONObject json;
         try {

@@ -1,7 +1,7 @@
-package SiGameBot.GameDisplaying;
+package sigamebot.gamedisplaying;
 
-import SiGameBot.Logic.Player;
-import SiGameBot.Logic.ScenarioLogic.Question;
+import sigamebot.logic.Player;
+import sigamebot.logic.scenariologic.Question;
 
 public interface IGameDisplay {
     void displayStartMessage();
