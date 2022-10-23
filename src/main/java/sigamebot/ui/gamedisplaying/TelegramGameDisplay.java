@@ -21,6 +21,7 @@ public class TelegramGameDisplay implements IGameDisplay, ICallbackQueryHandler 
         this.bot = bot;
         this.chatId = chatId;
     }
+
     @Override
     public void displayStartMessage() {
         var startButton = new InlineKeyboardButton();

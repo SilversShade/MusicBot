@@ -8,15 +8,12 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +24,11 @@ public class SigameBot extends TelegramLongPollingBot {
 
     private static final String NAME = "SIGame Bot";
 
-    private static Map<String, SigameBotCommand> commandMap;
+    public static Map<String, SigameBotCommand> commandMap;
 
-    private static  Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
+    private static Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
 
     public SigameBot() {
-
         commandMap = Map.of("/start",
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
                 "/begin",
@@ -46,38 +42,7 @@ public class SigameBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = null;
-
-        if (update.hasMessage())
-            message = update.getMessage();
-
-        if(message != null && commandMap.containsKey(message.getText())) {
-            try {
-                commandMap.get(message.getText()).executeCommand(message.getChatId());
-            } catch (IOException e) {
-                this.sendMessage("При обработке команды произошла ошибка", message.getChatId());
-                e.printStackTrace();
-            }
-        }
-        else if (update.hasCallbackQuery()) {
-            var callData = update.getCallbackQuery().getData();
-            var messageId = update.getCallbackQuery().getMessage().getMessageId();
-            var chatId = update.getCallbackQuery().getMessage().getChatId();
-
-            var callbackPrefix = callData.split(" ")[0];
-            if (queryHandlerMap.containsKey(callbackPrefix)) {
-                try {
-                    queryHandlerMap
-                            .get(callbackPrefix)
-                            .getMethod("handleCallbackQuery",
-                                    SigameBot.class, String.class, Integer.class, Long.class)
-                            .invoke(null, this, callData, messageId, chatId);
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    this.sendMessage("Произошла ошибка во время обработка запроса", chatId);
-                    e.printStackTrace();
-                }
-            }
-        }
+        UpdateProcessor.processUpdate(this, update, commandMap, queryHandlerMap);
     }
 
     @Override
