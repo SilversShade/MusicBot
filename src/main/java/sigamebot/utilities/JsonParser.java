@@ -1,48 +1,26 @@
 package sigamebot.utilities;
 
+import com.google.gson.Gson;
 import sigamebot.logic.scenariologic.Category;
 import sigamebot.logic.scenariologic.Question;
-import org.json.simple.*;
-import org.json.simple.JSONValue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class JsonParser {
-
     public static Category getGameFromJson(int gameNumberInFolder){
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
+        var tests = sigamebot.utilities.FileParser.getAllFilesFromDir("src/main/resources/tests");
         String path = "src/main/resources/tests/" + tests.get(gameNumberInFolder).getName();
         String jsonString;
-        JSONObject json;
         try {
-            jsonString = StreamReader.readFromInputStream(
-                    new FileInputStream(path));
-            Object obj = JSONValue.parse(jsonString);
-            json = (JSONObject) obj;
-            json = (JSONObject) json.get("test");
-            String name = (String) json.get("desc");
-            JSONArray jsonQuestions = (JSONArray) json.get("questions");
-            var questions = new ArrayList<Question>();
-            for(var i = 0; i < jsonQuestions.size(); i++){
-                var optionAnswers = new ArrayList<String>();
-                JSONArray jsonAnswers = (JSONArray)((JSONObject)jsonQuestions.get(i)).get("options");
-                for (Object jsonAnswer : jsonAnswers) {
-                    optionAnswers.add((String) jsonAnswer);
-                }
-                Question question = new Question(i,
-                        ((Long)((JSONObject)jsonQuestions.get(i)).get("points")).intValue(),
-                        (String)((JSONObject)jsonQuestions.get(i)).get("title"),
-                        (String)((JSONObject)jsonQuestions.get(i)).get("desc"),
-                        optionAnswers,
-                        (String)((JSONObject)jsonQuestions.get(i)).get("correct")
-                        );
-                questions.add(question);
-            }
-            return new Category(name, questions);
+            jsonString = sigamebot.utilities.StreamReader.readFromInputStream(
+                    path);
+            Gson gson = new Gson();
+            var scenario = gson.fromJson(jsonString, Category.class);
+            return scenario;
         } catch (IOException e) {
-            return new Category("", new ArrayList<>());
+            return new Category("", new ArrayList<Question>());
         }
     }
 }

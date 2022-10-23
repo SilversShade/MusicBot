@@ -10,17 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TelegramGameDisplay implements IGameDisplay{
-
     private final SigameBot bot;
-
     private final long chatId;
-
     private int messageId;
     public TelegramGameDisplay(SigameBot bot, long chatId) {
         this.bot = bot;
         this.chatId = chatId;
     }
-
     @Override
     public void displayStartMessage() {
         InlineKeyboardButton startButton = new InlineKeyboardButton();
@@ -30,7 +26,6 @@ public class TelegramGameDisplay implements IGameDisplay{
         buttons.add(List.of(startButton));
         messageId = this.bot.sendMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, buttons);
     }
-
     @Override
     public void updateGameStateView(Question currentQuestion, Player player) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
@@ -45,10 +40,7 @@ public class TelegramGameDisplay implements IGameDisplay{
             if (i%2 != 0)
                 answerOptionsButtons.add(row);
         }
-        this.bot.editMessage("Вопрос номер "
-                + (currentQuestion.questionNumber+1)
-                + ".\n\n"
-                + currentQuestion.questionTitle
+        this.bot.editMessage(currentQuestion.questionTitle
                 + "\n\n"
                 + currentQuestion.questionDescription
                 + "\n\n"
@@ -58,7 +50,6 @@ public class TelegramGameDisplay implements IGameDisplay{
                 messageId,
                 answerOptionsButtons);
     }
-
     @Override
     public void displayEndgameMessage(Player player) {
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);

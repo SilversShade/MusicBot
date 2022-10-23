@@ -143,7 +143,6 @@ public class SigameBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             return -1;
         }
-
     }
 
     // Удаление сообщения
