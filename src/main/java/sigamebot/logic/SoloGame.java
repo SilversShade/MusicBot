@@ -1,6 +1,6 @@
 package sigamebot.logic;
 
-import sigamebot.gamedisplaying.IGameDisplay;
+import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.logic.scenariologic.Category;
 
 import java.util.HashMap;
@@ -44,7 +44,8 @@ public class SoloGame {
         else this.player.score -= previousQuestion.cost;
 
         if (currentQuestion == this.scenario.questions.size()) {
-            this.gameDisplay.displayEndgameMessage(player);
+            this.gameDisplay.displayEndMessage(player);
+            ongoingSoloGames.get(this.player.chatId).finish(this.player.chatId);
             return;
         }
 

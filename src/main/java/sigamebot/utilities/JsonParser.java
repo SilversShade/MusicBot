@@ -2,9 +2,7 @@ package sigamebot.utilities;
 
 import com.google.gson.Gson;
 import sigamebot.logic.scenariologic.Category;
-import sigamebot.logic.scenariologic.Question;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,11 +14,10 @@ public class JsonParser {
         try {
             jsonString = sigamebot.utilities.StreamReader.readFromInputStream(
                     path);
-            Gson gson = new Gson();
-            var scenario = gson.fromJson(jsonString, Category.class);
-            return scenario;
+            var gson = new Gson();
+            return gson.fromJson(jsonString, Category.class);
         } catch (IOException e) {
-            return new Category("", new ArrayList<Question>());
+            return new Category("", new ArrayList<>());
         }
     }
 }
