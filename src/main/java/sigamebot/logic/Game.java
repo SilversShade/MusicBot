@@ -27,7 +27,7 @@ public class Game {
     public void addPlayer(String name, long chatId){
         Player player = new Player(name, chatId, this);
         players.add(player);
-        bot.sendMessage(name + " подключился к игре", leading.id);
+        bot.sendMessage(name + " подключился к игре", leading.chatId);
     }
     public boolean addPlayer(String name, String pass, long chatId){
         if(pass.equals(password)){

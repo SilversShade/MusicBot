@@ -4,7 +4,6 @@ import sigamebot.SigameBot;
 import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Singleton

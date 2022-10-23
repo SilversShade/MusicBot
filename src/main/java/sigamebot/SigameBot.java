@@ -55,14 +55,14 @@ public class SigameBot extends TelegramLongPollingBot {
             var chatId = update.getCallbackQuery().getMessage().getChatId();
 
             var parsedData = callData.split(" ");
-            if (parsedData[0].equals("testselect")) {
+            if (parsedData[0].equals(BeginCommand.BEGIN_COMMAND_CALLBACK_PREFIX)) {
                 this.deleteMessage(chatId, messageId);
                 SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                         JsonParser.getGameFromJson(Integer.parseInt(parsedData[1])),
                         new TelegramGameDisplay(this, chatId)));
                 SoloGame.getOngoingSoloGames().get(chatId).start();
             }
-            if (parsedData[0].equals("solo"))
+            if (parsedData[0].equals(TelegramGameDisplay.SOLO_GAME_CALLBACK_PREFIX))
             {
                 parsedData = callData.split(" ", 2);
                 SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
@@ -76,7 +76,9 @@ public class SigameBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public String getBotToken() { return TOKEN; }
+    public String getBotToken() {
+        return TOKEN;
+    }
 
     // Отправка сообщений
     public int sendMessage(String text, long chatId){
@@ -99,16 +101,16 @@ public class SigameBot extends TelegramLongPollingBot {
             return -1;
         }
     }
-    public int sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
-        SendMessage message = createSendMessageObject(text, chatId);
-        message.setReplyMarkup(keyboard);
-        try {
-            return execute(message).getMessageId();
-        } catch (TelegramApiException e) {
-            return -1;
-        }
-
-    }
+    //public int sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
+    //    SendMessage message = createSendMessageObject(text, chatId);
+    //    message.setReplyMarkup(keyboard);
+    //    try {
+    //        return execute(message).getMessageId();
+    //    } catch (TelegramApiException e) {
+    //        return -1;
+    //    }
+//
+    //}
 
     // Редактирование сообщения
     public int editMessage(String text, long chatId, int messageId){
@@ -134,16 +136,16 @@ public class SigameBot extends TelegramLongPollingBot {
         }
 
     }
-    public int editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
-        EditMessageText message = createEditMessageObject(text, chatId, messageId);
-        message.setReplyMarkup(keyboard);
-        try {
-            execute(message);
-            return 0;
-        } catch (TelegramApiException e) {
-            return -1;
-        }
-    }
+    //public int editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
+    //    EditMessageText message = createEditMessageObject(text, chatId, messageId);
+    //    message.setReplyMarkup(keyboard);
+    //    try {
+    //        execute(message);
+    //        return 0;
+    //    } catch (TelegramApiException e) {
+    //        return -1;
+    //    }
+    //}
 
     // Удаление сообщения
     public int deleteMessage(long chatId, int messageId){

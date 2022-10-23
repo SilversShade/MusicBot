@@ -15,6 +15,7 @@ public class BeginCommand extends SigameBotCommand {
         super(command, description, bot);
     }
 
+    public static final String BEGIN_COMMAND_CALLBACK_PREFIX = "begin";
     @Override
     public void executeCommand(long chatId) {
         var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
@@ -27,7 +28,7 @@ public class BeginCommand extends SigameBotCommand {
         for (var i = 0; i < tests.size(); i++) {
             var button = new InlineKeyboardButton();
             button.setText(String.format("%d. %s", i + 1, FilenameUtils.removeExtension(tests.get(i).getName())));
-            button.setCallbackData("testselect " + i);
+            button.setCallbackData(BEGIN_COMMAND_CALLBACK_PREFIX + " " + i);
             buttons.add(List.of(button));
         }
 

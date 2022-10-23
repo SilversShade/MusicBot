@@ -13,15 +13,18 @@ public class TelegramGameDisplay implements IGameDisplay{
     private final SigameBot bot;
     private final long chatId;
     private int messageId;
+
+    public static final String SOLO_GAME_CALLBACK_PREFIX = "solo";
+
     public TelegramGameDisplay(SigameBot bot, long chatId) {
         this.bot = bot;
         this.chatId = chatId;
     }
     @Override
     public void displayStartMessage() {
-        InlineKeyboardButton startButton = new InlineKeyboardButton();
+        var startButton = new InlineKeyboardButton();
         startButton.setText("Начать");
-        startButton.setCallbackData("solo start");
+        startButton.setCallbackData(SOLO_GAME_CALLBACK_PREFIX + " start");
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(startButton));
         messageId = this.bot.sendMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, buttons);
@@ -33,7 +36,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             var option = new InlineKeyboardButton();
             option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));
-            option.setCallbackData("solo " + currentQuestion.answerOptions.get(i));
+            option.setCallbackData(SOLO_GAME_CALLBACK_PREFIX + " " + currentQuestion.answerOptions.get(i));
             if (i%2 == 0)
                 row = new ArrayList<>();
             row.add(option);
@@ -51,8 +54,7 @@ public class TelegramGameDisplay implements IGameDisplay{
                 answerOptionsButtons);
     }
     @Override
-    public void displayEndgameMessage(Player player) {
+    public void displayEndMessage(Player player) {
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
-        SoloGame.getOngoingSoloGames().get(chatId).finish(chatId);
     }
 }
