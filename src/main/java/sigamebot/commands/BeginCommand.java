@@ -17,7 +17,7 @@ public class BeginCommand extends SigameBotCommand {
 
     @Override
     public void executeCommand(long chatId) {
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/Tests");
+        var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
         if (tests.isEmpty()) {
             this.bot.sendMessage("Не найдено ни одного теста.", chatId);
             return;
