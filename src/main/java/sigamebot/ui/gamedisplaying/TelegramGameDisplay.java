@@ -1,11 +1,10 @@
 package sigamebot.ui.gamedisplaying;
 
-import sigamebot.bot.ICallbackQueryHandler;
-import sigamebot.bot.ITelegramBot;
+import sigamebot.bot.userinteraction.ICallbackQueryHandler;
+import sigamebot.bot.core.ITelegramBot;
 import sigamebot.logic.Player;
 import sigamebot.logic.SoloGame;
 import sigamebot.logic.scenariologic.Question;
-import sigamebot.bot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;

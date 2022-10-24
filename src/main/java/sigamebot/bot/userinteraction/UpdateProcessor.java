@@ -1,10 +1,9 @@
-package sigamebot.bot;
+package sigamebot.bot.userinteraction;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import sigamebot.bot.commands.IBotCommand;
-import sigamebot.bot.commands.SigameBotCommand;
+import sigamebot.bot.core.ITelegramBot;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

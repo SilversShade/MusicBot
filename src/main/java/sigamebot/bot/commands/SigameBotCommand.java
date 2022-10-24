@@ -1,7 +1,6 @@
 package sigamebot.bot.commands;
 
-import sigamebot.bot.ITelegramBot;
-import sigamebot.bot.SigameBot;
+import sigamebot.bot.core.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package sigamebot.bot;
+package sigamebot.bot.core;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 

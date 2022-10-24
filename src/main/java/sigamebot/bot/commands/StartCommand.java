@@ -1,6 +1,6 @@
 package sigamebot.bot.commands;
 
-import sigamebot.bot.SigameBot;
+import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;

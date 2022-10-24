@@ -1,5 +1,7 @@
-package sigamebot.bot;
+package sigamebot.bot.core;
 
+import sigamebot.bot.userinteraction.ICallbackQueryHandler;
+import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.commands.BeginCommand;
 import sigamebot.bot.commands.SigameBotCommand;
 import sigamebot.bot.commands.StartCommand;

@@ -1,8 +1,8 @@
 package sigamebot.bot.commands;
 
-import sigamebot.bot.ICallbackQueryHandler;
-import sigamebot.bot.ITelegramBot;
-import sigamebot.bot.SigameBot;
+import sigamebot.bot.userinteraction.ICallbackQueryHandler;
+import sigamebot.bot.core.ITelegramBot;
+import sigamebot.bot.core.SigameBot;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.FileParser;

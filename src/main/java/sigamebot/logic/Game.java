@@ -1,6 +1,6 @@
 package sigamebot.logic;
 
-import sigamebot.bot.SigameBot;
+import sigamebot.bot.core.SigameBot;
 
 import java.util.ArrayList;
 
