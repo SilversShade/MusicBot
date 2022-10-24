@@ -14,5 +14,5 @@ public abstract class SigameBotCommand extends BotCommand implements IBotCommand
         this.bot = bot;
     }
 
-    public abstract void executeCommand(long chatId) throws IOException;
+    public abstract void executeCommand(long chatId);
 }

@@ -24,6 +24,7 @@ public class SoloGame {
     }
 
     public void start(){
+        //TODO: validate chosen game
         this.gameDisplay.displayStartMessage();
     }
 

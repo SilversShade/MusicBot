@@ -13,9 +13,13 @@ public class StartCommand extends SigameBotCommand{
     }
 
     @Override
-    public void executeCommand(long chatId) throws IOException {
-        this.bot.sendMessage(StreamReader.readFromInputStream(
-                "src/main/resources/commandmessages/startcommandmessage.txt"),
-                chatId);
+    public void executeCommand(long chatId) {
+        try {
+            this.bot.sendMessage(StreamReader.readFromInputStream(
+                            "src/main/resources/commandmessages/startcommandmessage.txt"),
+                    chatId);
+        } catch (IOException e) {
+            this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);
+        }
     }
 }
