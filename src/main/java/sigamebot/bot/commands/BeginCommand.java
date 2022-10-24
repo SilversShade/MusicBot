@@ -1,6 +1,7 @@
 package sigamebot.bot.commands;
 
 import sigamebot.bot.ICallbackQueryHandler;
+import sigamebot.bot.ITelegramBot;
 import sigamebot.bot.SigameBot;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
@@ -39,7 +40,7 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
         this.bot.sendMessage("Выберите тест из списка:", chatId, buttons);
     }
 
-    public static void handleCallbackQuery(SigameBot bot, String callData, Integer messageId, Long chatId) {
+    public static void handleCallbackQuery(ITelegramBot bot, String callData, Integer messageId, Long chatId) {
         bot.deleteMessage(chatId, messageId);
         SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                 JsonParser.getGameFromJson(Integer.parseInt(callData.split(" ")[1])),

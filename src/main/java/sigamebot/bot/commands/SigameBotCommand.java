@@ -1,11 +1,12 @@
 package sigamebot.bot.commands;
 
+import sigamebot.bot.ITelegramBot;
 import sigamebot.bot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.io.IOException;
 
-public abstract class SigameBotCommand extends BotCommand {
+public abstract class SigameBotCommand extends BotCommand implements IBotCommand {
 
     protected final SigameBot bot;
 

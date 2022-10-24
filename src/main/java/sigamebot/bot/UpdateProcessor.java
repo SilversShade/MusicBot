@@ -2,6 +2,8 @@ package sigamebot.bot;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import sigamebot.bot.commands.IBotCommand;
 import sigamebot.bot.commands.SigameBotCommand;
 
 import java.io.IOException;
@@ -9,9 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class UpdateProcessor {
-    public static void processUpdate(SigameBot bot,
+    public static void processUpdate(ITelegramBot bot,
                                      Update update,
-                                     Map<String, SigameBotCommand> commandMap,
+                                     Map<String, ? extends IBotCommand> commandMap,
                                      Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap) {
         Message message = null;
 
@@ -24,7 +26,7 @@ public class UpdateProcessor {
             processCallbackQuery(bot, update, queryHandlerMap);
     }
 
-    private static void processCallbackQuery(SigameBot bot,
+    private static void processCallbackQuery(ITelegramBot bot,
                                              Update update,
                                              Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap) {
         var callData = update.getCallbackQuery().getData();
@@ -37,7 +39,7 @@ public class UpdateProcessor {
                 queryHandlerMap
                         .get(callbackPrefix)
                         .getMethod("handleCallbackQuery",
-                                SigameBot.class, String.class, Integer.class, Long.class)
+                                ITelegramBot.class, String.class, Integer.class, Long.class)
                         .invoke(null, bot, callData, messageId, chatId);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 bot.sendMessage("Произошла ошибка во время обработки запроса", chatId);
@@ -47,7 +49,7 @@ public class UpdateProcessor {
 
     }
 
-    private static void processCommands(SigameBot bot, Message message, Map<String, SigameBotCommand> commandMap) {
+    private static void processCommands(ITelegramBot bot, Message message, Map<String, ? extends IBotCommand> commandMap) {
         if(message != null && commandMap.containsKey(message.getText())) {
             try {
                 commandMap.get(message.getText()).executeCommand(message.getChatId());

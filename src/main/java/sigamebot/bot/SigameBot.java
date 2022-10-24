@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class SigameBot extends TelegramLongPollingBot {
+public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
 
     private static final String TOKEN = System.getenv("botToken");
 

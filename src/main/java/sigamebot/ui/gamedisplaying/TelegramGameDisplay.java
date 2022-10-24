@@ -1,6 +1,7 @@
 package sigamebot.ui.gamedisplaying;
 
 import sigamebot.bot.ICallbackQueryHandler;
+import sigamebot.bot.ITelegramBot;
 import sigamebot.logic.Player;
 import sigamebot.logic.SoloGame;
 import sigamebot.logic.scenariologic.Question;
@@ -11,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TelegramGameDisplay implements IGameDisplay, ICallbackQueryHandler {
-    private final SigameBot bot;
+    private final ITelegramBot bot;
     private final long chatId;
     private int messageId;
 
     public static final String SOLO_GAME_CALLBACK_PREFIX = "solo";
 
-    public TelegramGameDisplay(SigameBot bot, long chatId) {
+    public TelegramGameDisplay(ITelegramBot bot, long chatId) {
         this.bot = bot;
         this.chatId = chatId;
     }
@@ -56,7 +57,7 @@ public class TelegramGameDisplay implements IGameDisplay, ICallbackQueryHandler 
     }
 
 
-    public static void handleCallbackQuery(SigameBot bot, String callData, Integer messageId, Long chatId) {
+    public static void handleCallbackQuery(ITelegramBot bot, String callData, Integer messageId, Long chatId) {
         var parsedData = callData.split(" ", 2);
         SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
     }
