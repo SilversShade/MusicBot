@@ -50,12 +50,7 @@ public class UpdateProcessor {
 
     private static void processCommands(ITelegramBot bot, Message message, Map<String, ? extends IBotCommand> commandMap) {
         if(message != null && commandMap.containsKey(message.getText())) {
-            try {
-                commandMap.get(message.getText()).executeCommand(message.getChatId());
-            } catch (IOException e) {
-                bot.sendMessage("При обработке команды произошла ошибка", message.getChatId());
-                e.printStackTrace();
-            }
+            commandMap.get(message.getText()).executeCommand(message.getChatId());
         }
     }
 }
