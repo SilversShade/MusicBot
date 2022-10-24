@@ -1,16 +1,20 @@
-package sigamebot.commands;
+package sigamebot.bot.commands;
 
-import sigamebot.SigameBot;
+import sigamebot.bot.ICallbackQueryHandler;
+import sigamebot.bot.SigameBot;
+import sigamebot.logic.SoloGame;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.FileParser;
 import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import sigamebot.utilities.JsonParser;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class BeginCommand extends SigameBotCommand {
+public class BeginCommand extends SigameBotCommand implements ICallbackQueryHandler {
     public BeginCommand(String command, String description, SigameBot bot) {
         super(command, description, bot);
     }
@@ -34,4 +38,13 @@ public class BeginCommand extends SigameBotCommand {
 
         this.bot.sendMessage("Выберите тест из списка:", chatId, buttons);
     }
+
+    public static void handleCallbackQuery(SigameBot bot, String callData, Integer messageId, Long chatId) {
+        bot.deleteMessage(chatId, messageId);
+        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
+                JsonParser.getGameFromJson(Integer.parseInt(callData.split(" ")[1])),
+                new TelegramGameDisplay(bot, chatId)));
+        SoloGame.getOngoingSoloGames().get(chatId).start();
+    }
+
 }

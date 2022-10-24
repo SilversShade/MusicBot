@@ -1,6 +1,6 @@
 package sigamebot.logic;
 
-import sigamebot.gamedisplaying.IGameDisplay;
+import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.logic.scenariologic.Category;
 
 import java.util.HashMap;

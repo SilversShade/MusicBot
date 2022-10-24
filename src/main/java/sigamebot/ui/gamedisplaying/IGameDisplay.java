@@ -1,4 +1,4 @@
-package sigamebot.gamedisplaying;
+package sigamebot.ui.gamedisplaying;
 
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;

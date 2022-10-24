@@ -1,15 +1,16 @@
-package sigamebot.gamedisplaying;
+package sigamebot.ui.gamedisplaying;
 
+import sigamebot.bot.ICallbackQueryHandler;
 import sigamebot.logic.Player;
-import sigamebot.logic.scenariologic.Question;
 import sigamebot.logic.SoloGame;
-import sigamebot.SigameBot;
+import sigamebot.logic.scenariologic.Question;
+import sigamebot.bot.SigameBot;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TelegramGameDisplay implements IGameDisplay{
+public class TelegramGameDisplay implements IGameDisplay, ICallbackQueryHandler {
     private final SigameBot bot;
     private final long chatId;
     private int messageId;
@@ -20,6 +21,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         this.bot = bot;
         this.chatId = chatId;
     }
+
     @Override
     public void displayStartMessage() {
         var startButton = new InlineKeyboardButton();
@@ -32,16 +34,11 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void updateGameStateView(Question currentQuestion, Player player) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             var option = new InlineKeyboardButton();
             option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));
             option.setCallbackData(SOLO_GAME_CALLBACK_PREFIX + " " + currentQuestion.answerOptions.get(i));
-            if (i%2 == 0)
-                row = new ArrayList<>();
-            row.add(option);
-            if (i%2 != 0)
-                answerOptionsButtons.add(row);
+            answerOptionsButtons.add(List.of(option));
         }
         this.bot.editMessage(currentQuestion.questionTitle
                 + "\n\n"
@@ -56,5 +53,11 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void displayEndMessage(Player player) {
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
+    }
+
+
+    public static void handleCallbackQuery(SigameBot bot, String callData, Integer messageId, Long chatId) {
+        var parsedData = callData.split(" ", 2);
+        SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
     }
 }
