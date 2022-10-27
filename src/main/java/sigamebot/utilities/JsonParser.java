@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class JsonParser {
-    public static Category getGameFromJson(int gameNumberInFolder){
-        var tests = sigamebot.utilities.FileParser.getAllFilesFromDir("src/main/resources/packs");
-        String path = "src/main/resources/packs/" + tests.get(gameNumberInFolder).getName();
+    public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder){
+        var tests = sigamebot.utilities.FileParser.getAllFilesFromDir(pathToFolder);
+        String path = pathToFolder + tests.get(gameNumberInFolder).getName();
         String jsonString;
         try {
             jsonString = sigamebot.utilities.StreamReader.readFromInputStream(path);

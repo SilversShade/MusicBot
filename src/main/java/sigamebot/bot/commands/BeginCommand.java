@@ -57,15 +57,12 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
     public static void handleCallbackQuery(ITelegramBot bot, String callData, Integer messageId, Long chatId) {
         bot.deleteMessage(chatId, messageId);
         if (callData.split(" ")[1].equals(BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX)) {
-            bot.sendMessage("Отправьте Ваш пак. Если вы передумали, введите команду /cancel", chatId);
+            bot.sendMessage("Отправьте Ваш пак. Если Вы передумали, введите команду /cancel", chatId);
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
             return;
         }
 
-        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
-                JsonParser.getGameFromJson(Integer.parseInt(callData.split(" ")[1])),
-                new TelegramGameDisplay(bot, chatId)));
-        SoloGame.getOngoingSoloGames().get(chatId).start();
+        SoloGame.startNewSoloGame(bot, chatId, Integer.parseInt(callData.split(" ")[1]), "src/main/resources/packs/");
     }
 
 }

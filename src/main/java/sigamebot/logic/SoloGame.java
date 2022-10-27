@@ -1,7 +1,10 @@
 package sigamebot.logic;
 
+import sigamebot.bot.core.ITelegramBot;
 import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.logic.scenariologic.Category;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.utilities.JsonParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,13 @@ public class SoloGame {
 
     public static Map<Long, SoloGame> getOngoingSoloGames() {
         return ongoingSoloGames;
+    }
+
+    public static void startNewSoloGame(ITelegramBot bot, long chatId, int packNumberInDirectory, String pathToPackFolder) {
+        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
+                JsonParser.getGameFromJson(packNumberInDirectory, pathToPackFolder),
+                new TelegramGameDisplay(bot, chatId)));
+        SoloGame.getOngoingSoloGames().get(chatId).start();
     }
 
     public void start(){
