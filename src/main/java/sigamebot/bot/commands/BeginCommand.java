@@ -4,6 +4,7 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.bot.userinteraction.filehandlers.NewUserPackHandler;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.FileParser;
@@ -36,16 +37,20 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
     public void executeCommand(long chatId) {
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
             return;
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/packs");
-        if (tests.isEmpty()) {
+        var inbuiltPacks = FileParser.getAllFilesFromDir("src/main/resources/packs");
+        var userPacks = FileParser.getAllFilesFromDir("src/main/resources/userpacks");
+        if (inbuiltPacks.isEmpty() && userPacks.isEmpty()) {
             this.bot.sendMessage("Не найдено ни одного пака.", chatId);
             return;
         }
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        for (var i = 0; i < tests.size(); i++) {
+        for (var i = 0; i < inbuiltPacks.size() + userPacks.size(); i++) {
             var button = new InlineKeyboardButton();
-            button.setText(String.format("%d. %s", i + 1, FilenameUtils.removeExtension(tests.get(i).getName())));
+            button.setText(String.format("%d. %s", i + 1,
+                    FilenameUtils.removeExtension(i < inbuiltPacks.size()
+                            ? inbuiltPacks.get(i).getName()
+                            : userPacks.get(i - inbuiltPacks.size()).getName())));
             button.setCallbackData(BEGIN_COMMAND_CALLBACK_PREFIX + " " + i);
             buttons.add(List.of(button));
         }
@@ -62,7 +67,16 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
             return;
         }
 
-        SoloGame.startNewSoloGame(bot, chatId, Integer.parseInt(callData.split(" ")[1]), "src/main/resources/packs/");
+
+        var packNumber = Integer.parseInt(callData.split(" ")[1]);
+        var numberOfInbuiltPacks = NewUserPackHandler.getNumberOfPacksInDirectory("src/main/resources/packs");
+        var pathToPackFolder = packNumber < numberOfInbuiltPacks
+                ? "src/main/resources/packs/"
+                : "src/main/resources/userpacks/";
+        packNumber = packNumber < numberOfInbuiltPacks
+                ? packNumber
+                : packNumber - numberOfInbuiltPacks;
+        SoloGame.startNewSoloGame(bot, chatId, packNumber, pathToPackFolder);
     }
 
 }

@@ -67,7 +67,6 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
 
         UserFileHandler.handleUserFiles(this, message);
 
-
         if (update.hasCallbackQuery())
             UpdateProcessor.processCallbackQuery(this, update, queryHandlerMap);
     }

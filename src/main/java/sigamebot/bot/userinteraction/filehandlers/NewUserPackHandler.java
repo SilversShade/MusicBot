@@ -9,8 +9,6 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
-import sigamebot.utilities.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +25,8 @@ public class NewUserPackHandler {
         SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
     }
 
-    private static int getNumberOfPacksInDirectory() {
-        var packsInDirectory = new File("src/main/resources/userpacks/").list();
+    public static int getNumberOfPacksInDirectory(String directoryPath) {
+        var packsInDirectory = new File(directoryPath).list();
         return packsInDirectory == null ? 0 : packsInDirectory.length;
     }
 
@@ -62,7 +60,7 @@ public class NewUserPackHandler {
                 return;
             }
 
-            var numberOfPacksInDirectory = getNumberOfPacksInDirectory();
+            var numberOfPacksInDirectory = getNumberOfPacksInDirectory("src/main/resources/userpacks/");
             try {
                 var result = createFileForUserPack(numberOfPacksInDirectory);
                 if (!result) {
