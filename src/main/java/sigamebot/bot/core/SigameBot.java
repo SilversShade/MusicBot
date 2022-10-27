@@ -1,10 +1,15 @@
 package sigamebot.bot.core;
 
+import org.telegram.telegrambots.meta.api.objects.Message;
+import sigamebot.bot.botstate.ITelegramBotState;
+import sigamebot.bot.botstate.SigameBotState;
+import sigamebot.bot.commands.CancelCommand;
 import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.commands.BeginCommand;
 import sigamebot.bot.commands.SigameBotCommand;
 import sigamebot.bot.commands.StartCommand;
+import sigamebot.bot.userinteraction.UserFileHandler;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,6 +21,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Singleton;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,21 +36,40 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
 
     private static Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
 
+    public static Map<Long, ITelegramBotState> chatToBotState;
+
     public SigameBot() {
         commandMap = Map.of("/start",
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
                 "/begin",
-                new BeginCommand("/begin", "Начало игры", this));
+                new BeginCommand("/begin", "Начало игры", this),
+                "/cancel",
+                new CancelCommand("/cancel", "Выход из режима ожидания отправки пака", this));
 
         queryHandlerMap = Map.of(BeginCommand.BEGIN_COMMAND_CALLBACK_PREFIX,
                 BeginCommand.class,
                 TelegramGameDisplay.SOLO_GAME_CALLBACK_PREFIX,
                 TelegramGameDisplay.class);
+
+        chatToBotState = new HashMap<>();
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        UpdateProcessor.processUpdate(this, update, commandMap, queryHandlerMap);
+        Message message = null;
+
+        if (update.hasMessage()) {
+            message = update.getMessage();
+            if (!chatToBotState.containsKey(message.getChatId()))
+                chatToBotState.put(message.getChatId(), SigameBotState.DEFAULT_STATE);
+        }
+
+        UpdateProcessor.processCommands(message, commandMap);
+
+        if (update.hasCallbackQuery())
+            UpdateProcessor.processCallbackQuery(this, update, queryHandlerMap);
+
+        UserFileHandler.handleUserFiles(update);
     }
 
     @Override

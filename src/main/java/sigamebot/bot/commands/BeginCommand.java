@@ -1,5 +1,6 @@
 package sigamebot.bot.commands;
 
+import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
@@ -21,11 +22,23 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
     }
 
     public static final String BEGIN_COMMAND_CALLBACK_PREFIX = "begin";
+
+    public static final String BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX = "newpack";
+
+    private InlineKeyboardButton createAddNewPackButton() {
+        var addNewPackButton = new InlineKeyboardButton();
+        addNewPackButton.setText("Выбрать свой пак");
+        addNewPackButton.setCallbackData(BEGIN_COMMAND_CALLBACK_PREFIX + " " + BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX);
+        return addNewPackButton;
+    }
+
     @Override
     public void executeCommand(long chatId) {
-        var tests = FileParser.getAllFilesFromDir("src/main/resources/tests");
+        if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
+            return;
+        var tests = FileParser.getAllFilesFromDir("src/main/resources/packs");
         if (tests.isEmpty()) {
-            this.bot.sendMessage("Не найдено ни одного теста.", chatId);
+            this.bot.sendMessage("Не найдено ни одного пака.", chatId);
             return;
         }
 
@@ -37,11 +50,18 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
             buttons.add(List.of(button));
         }
 
-        this.bot.sendMessage("Выберите тест из списка:", chatId, buttons);
+        buttons.add(List.of(createAddNewPackButton()));
+        this.bot.sendMessage("Выберите пак из списка:", chatId, buttons);
     }
 
     public static void handleCallbackQuery(ITelegramBot bot, String callData, Integer messageId, Long chatId) {
         bot.deleteMessage(chatId, messageId);
+        if (callData.split(" ")[1].equals(BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX)) {
+            bot.sendMessage("Отправьте Ваш пак. Если вы передумали, введите команду /cancel", chatId);
+            SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
+            return;
+        }
+
         SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                 JsonParser.getGameFromJson(Integer.parseInt(callData.split(" ")[1])),
                 new TelegramGameDisplay(bot, chatId)));

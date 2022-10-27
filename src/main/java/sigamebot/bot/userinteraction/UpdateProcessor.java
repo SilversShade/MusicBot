@@ -5,27 +5,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import sigamebot.bot.commands.IBotCommand;
 import sigamebot.bot.core.ITelegramBot;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class UpdateProcessor {
-    public static void processUpdate(ITelegramBot bot,
-                                     Update update,
-                                     Map<String, ? extends IBotCommand> commandMap,
-                                     Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap) {
-        Message message = null;
 
-        if (update.hasMessage())
-            message = update.getMessage();
-
-        processCommands(bot, message, commandMap);
-
-        if (update.hasCallbackQuery())
-            processCallbackQuery(bot, update, queryHandlerMap);
-    }
-
-    private static void processCallbackQuery(ITelegramBot bot,
+    public static void processCallbackQuery(ITelegramBot bot,
                                              Update update,
                                              Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap) {
         var callData = update.getCallbackQuery().getData();
@@ -48,7 +33,11 @@ public class UpdateProcessor {
 
     }
 
-    private static void processCommands(ITelegramBot bot, Message message, Map<String, ? extends IBotCommand> commandMap) {
+    public static void handleUserFile(IFileHandler handler) {
+        handler.handleFile();
+    }
+
+    public static void processCommands(Message message, Map<String, ? extends IBotCommand> commandMap) {
         if(message != null && commandMap.containsKey(message.getText())) {
             commandMap.get(message.getText()).executeCommand(message.getChatId());
         }
