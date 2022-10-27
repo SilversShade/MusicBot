@@ -1,4 +1,4 @@
-package sigamebot.bot.userinteraction;
+package sigamebot.bot.userinteraction.filehandlers;
 
 @FunctionalInterface
 public interface IFileHandler {

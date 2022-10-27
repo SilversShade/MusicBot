@@ -9,7 +9,7 @@ import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.commands.BeginCommand;
 import sigamebot.bot.commands.SigameBotCommand;
 import sigamebot.bot.commands.StartCommand;
-import sigamebot.bot.userinteraction.UserFileHandler;
+import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -63,13 +63,13 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
             if (!chatToBotState.containsKey(message.getChatId()))
                 chatToBotState.put(message.getChatId(), SigameBotState.DEFAULT_STATE);
         }
-
         UpdateProcessor.processCommands(message, commandMap);
+
+        UserFileHandler.handleUserFiles(this, message);
+
 
         if (update.hasCallbackQuery())
             UpdateProcessor.processCallbackQuery(this, update, queryHandlerMap);
-
-        UserFileHandler.handleUserFiles(update);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import sigamebot.bot.commands.IBotCommand;
 import sigamebot.bot.core.ITelegramBot;
+import sigamebot.bot.userinteraction.filehandlers.IFileHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class UpdateProcessor {
     }
 
     public static void processCommands(Message message, Map<String, ? extends IBotCommand> commandMap) {
-        if(message != null && commandMap.containsKey(message.getText())) {
+        if(message != null && message.getText() != null &&  commandMap.containsKey(message.getText())) {
             commandMap.get(message.getText()).executeCommand(message.getChatId());
         }
     }
