@@ -6,30 +6,26 @@ import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.filehandlers.NewUserPackHandler;
 import sigamebot.logic.SoloGame;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.utilities.CallbackPrefix;
 import sigamebot.utilities.FileParser;
 import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import sigamebot.utilities.JsonParser;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class BeginCommand extends SigameBotCommand implements ICallbackQueryHandler {
-    public BeginCommand(String command, String description, SigameBot bot) {
+public class MenuCommand extends SigameBotCommand implements ICallbackQueryHandler {
+    public MenuCommand(String command, String description, SigameBot bot) {
         super(command, description, bot);
     }
-
-    public static final String BEGIN_COMMAND_CALLBACK_PREFIX = "begin";
-
     public static final String BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX = "newpack";
 
     private InlineKeyboardButton createAddNewPackButton() {
         var addNewPackButton = new InlineKeyboardButton();
         addNewPackButton.setText("Выбрать свой пак");
-        addNewPackButton.setCallbackData(BEGIN_COMMAND_CALLBACK_PREFIX + " " + BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX);
+        addNewPackButton.setCallbackData(CallbackPrefix.MENU + " " + BEGIN_COMMAND_ADD_NEW_PACK_CALLBACK_PREFIX);
         return addNewPackButton;
     }
 
@@ -51,7 +47,7 @@ public class BeginCommand extends SigameBotCommand implements ICallbackQueryHand
                     FilenameUtils.removeExtension(i < inbuiltPacks.size()
                             ? inbuiltPacks.get(i).getName()
                             : userPacks.get(i - inbuiltPacks.size()).getName())));
-            button.setCallbackData(BEGIN_COMMAND_CALLBACK_PREFIX + " " + i);
+            button.setCallbackData(CallbackPrefix.MENU + " " + i);
             buttons.add(List.of(button));
         }
 

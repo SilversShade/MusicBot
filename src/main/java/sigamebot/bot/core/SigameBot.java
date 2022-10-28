@@ -6,11 +6,12 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.commands.CancelCommand;
 import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.UpdateProcessor;
-import sigamebot.bot.commands.BeginCommand;
+import sigamebot.bot.commands.MenuCommand;
 import sigamebot.bot.commands.SigameBotCommand;
 import sigamebot.bot.commands.StartCommand;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.utilities.CallbackPrefix;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -27,27 +28,21 @@ import java.util.Map;
 
 @Singleton
 public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
-
     private static final String TOKEN = System.getenv("botToken");
-
     private static final String NAME = "SIGame Bot";
-
     public static Map<String, SigameBotCommand> commandMap;
-
     private static Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
-
     public static Map<Long, ITelegramBotState> chatToBotState;
-
     public SigameBot() {
         commandMap = Map.of("/start",
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
-                "/begin",
-                new BeginCommand("/begin", "Начало игры", this),
+                "/menu",
+                new MenuCommand("/begin", "Начало игры", this),
                 "/cancel",
                 new CancelCommand("/cancel", "Выход из режима ожидания отправки пака", this));
 
-        queryHandlerMap = Map.of(BeginCommand.BEGIN_COMMAND_CALLBACK_PREFIX,
-                BeginCommand.class,
+        queryHandlerMap = Map.of(CallbackPrefix.MENU,
+                MenuCommand.class,
                 TelegramGameDisplay.SOLO_GAME_CALLBACK_PREFIX,
                 TelegramGameDisplay.class);
 
