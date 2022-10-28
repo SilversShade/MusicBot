@@ -1,0 +1,4 @@
+MENU:/menu
+SOLO_GAME:/solo
+ONLINE_GAME:/online
+START:/start

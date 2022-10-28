@@ -4,60 +4,89 @@ import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.logic.Player;
 import sigamebot.logic.SoloGame;
+import sigamebot.logic.scenariologic.Category;
 import sigamebot.logic.scenariologic.Question;
+import sigamebot.utilities.callbackPrefix;
+import sigamebot.utilities.commandString;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import sigamebot.logic.scenariologic.Round;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TelegramGameDisplay implements IGameDisplay, ICallbackQueryHandler {
     private final ITelegramBot bot;
-    private final long chatId;
-    private int messageId;
-
-    public static final String SOLO_GAME_CALLBACK_PREFIX = "solo";
-
-    public TelegramGameDisplay(ITelegramBot bot, long chatId) {
+    public TelegramGameDisplay(ITelegramBot bot) {
         this.bot = bot;
-        this.chatId = chatId;
     }
 
     @Override
-    public void displayStartMessage() {
-        var startButton = new InlineKeyboardButton();
-        startButton.setText("Начать");
-        startButton.setCallbackData(SOLO_GAME_CALLBACK_PREFIX + " start");
+    public void displayStartMessage(Player player) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(List.of(startButton));
-        messageId = this.bot.sendMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, buttons);
+        var button = new InlineKeyboardButton();
+        button.setText("Начать");
+        button.setCallbackData(callbackPrefix.SOLO_MENU + " start");
+        buttons.add(List.of(button));
+        player.someMessageId.add(bot.sendMessage("Ваша игра готова", player.chatId, buttons));
     }
     @Override
-    public void updateGameStateView(Question currentQuestion, Player player) {
-        List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
-        for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
-            var option = new InlineKeyboardButton();
-            option.setText(String.format("%d. %s", i+1, currentQuestion.answerOptions.get(i)));
-            option.setCallbackData(SOLO_GAME_CALLBACK_PREFIX + " " + currentQuestion.answerOptions.get(i));
-            answerOptionsButtons.add(List.of(option));
-        }
-        this.bot.editMessage(currentQuestion.questionTitle
+    public void updateQuestionStateView(Question currentQuestion, Player player) {
+        String text = currentQuestion.questionTitle
                 + "\n\n"
                 + currentQuestion.questionDescription
                 + "\n\n"
-                + "Текущее количество очков игрока: "
-                + player.score,
-                chatId,
-                messageId,
-                answerOptionsButtons);
+                + "Текущее количество ваших очков: "
+                + player.score;
+        if(currentQuestion.type == 2){
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            ArrayList<InlineKeyboardButton> raw = new ArrayList<>();
+            for(var i = 0; i < currentQuestion.answerOptions.size(); i++) {
+                if (i % 2 == 0)
+                    raw = new ArrayList<>();
+                InlineKeyboardButton button = new InlineKeyboardButton();
+                button.setText(currentQuestion.answerOptions.get(i));
+                button.setCallbackData(callbackPrefix.SOLO_GAME + " " + currentQuestion.answerOptions.get(i));
+                raw.add(button);
+                if (i % 2 == 1)
+                    buttons.add(raw);
+            }
+            if(player.questionMessageId == -1)
+                player.questionMessageId = bot.sendMessage(text, player.chatId, buttons);
+            else
+                bot.editMessage(text, player.chatId, player.questionMessageId, buttons);
+        }
+    }
+    @Override
+    public void updateCategoryStateView(Category currentCategory, int categoryNumber, Player player) {
+
+    }
+    @Override
+    public void updateRoundStateView(Round currentRound, Player player) {
+
     }
     @Override
     public void displayEndMessage(Player player) {
-        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
+        String text = "Игра окончена"
+                + "\n\n"
+                + "Ваш счет: "
+                + player.score;
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText("Вернуться в меню");
+        button.setCallbackData(callbackPrefix.MENU + " /menu");
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        buttons.add(List.of(button));
+        if(player.questionMessageId != -1)
+            bot.editMessage(text, player.chatId, player.questionMessageId, buttons);
+        else
+            bot.sendMessage(text, player.chatId, buttons);
+        player = null;
     }
-
-
+    @Override
+    public void deleteSomeMessage(Player player){
+        for(var i : player.someMessageId)
+            bot.deleteMessage(player.chatId, i);
+    }
     public static void handleCallbackQuery(ITelegramBot bot, String callData, Integer messageId, Long chatId) {
-        var parsedData = callData.split(" ", 2);
-        SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
+        SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(callData.split(" ", 2)[1]);
     }
 }

@@ -43,6 +43,7 @@ public class UpdateProcessor {
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 bot.sendMessage("Произошла ошибка во время обработки запроса", chatId);
                 e.printStackTrace();
+                System.out.print(callData);
             }
         }
 

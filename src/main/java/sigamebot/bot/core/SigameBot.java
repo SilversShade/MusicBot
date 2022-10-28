@@ -1,11 +1,12 @@
 package sigamebot.bot.core;
 
+import sigamebot.bot.commands.*;
 import sigamebot.bot.userinteraction.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.UpdateProcessor;
-import sigamebot.bot.commands.BeginCommand;
-import sigamebot.bot.commands.SigameBotCommand;
-import sigamebot.bot.commands.StartCommand;
+import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.utilities.callbackPrefix;
+import sigamebot.utilities.commandString;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -21,25 +22,29 @@ import java.util.Map;
 
 @Singleton
 public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
-
     private static final String TOKEN = System.getenv("botToken");
-
     private static final String NAME = "SIGame Bot";
-
     public static Map<String, SigameBotCommand> commandMap;
-
     private static Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
+    public static IGameDisplay gameDisplay;
 
     public SigameBot() {
-        commandMap = Map.of("/start",
-                new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
-                "/begin",
-                new BeginCommand("/begin", "Начало игры", this));
+        commandMap = Map.of(commandString.START,
+                new StartCommand(commandString.START, "Краткое описание бота и список доступных команд", this),
+                commandString.MENU,
+                new MenuCommand(commandString.MENU, "Меню игры", this),
+                commandString.SOLO_GAME,
+                new SelectSoloGame(commandString.SOLO_GAME, "Одиночная игра", this),
+                commandString.ONLINE_GAME,
+                new SelectOnlineGame(commandString.ONLINE_GAME, "Онлайн игра", this));
 
-        queryHandlerMap = Map.of(BeginCommand.BEGIN_COMMAND_CALLBACK_PREFIX,
-                BeginCommand.class,
-                TelegramGameDisplay.SOLO_GAME_CALLBACK_PREFIX,
+        queryHandlerMap = Map.of(callbackPrefix.MENU,
+                MenuCommand.class,
+                callbackPrefix.SOLO_MENU,
+                SelectSoloGame.class,
+                callbackPrefix.SOLO_GAME,
                 TelegramGameDisplay.class);
+        gameDisplay = new TelegramGameDisplay(this);
     }
 
     @Override
@@ -58,6 +63,14 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
     }
 
     // Отправка сообщений
+    public int sendMessage(SendMessage message){
+        try {
+            return execute(message).getMessageId();
+        } catch (TelegramApiException e) {
+            return -1;
+        }
+
+    }
     public int sendMessage(String text, long chatId){
         SendMessage message = createSendMessageObject(text, chatId);
         try {
@@ -78,18 +91,17 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
             return -1;
         }
     }
-    //public int sendMessage(String text, long chatId, InlineKeyboardMarkup keyboard){
-    //    SendMessage message = createSendMessageObject(text, chatId);
-    //    message.setReplyMarkup(keyboard);
-    //    try {
-    //        return execute(message).getMessageId();
-    //    } catch (TelegramApiException e) {
-    //        return -1;
-    //    }
-//
-    //}
 
     // Редактирование сообщения
+    public int editMessage(EditMessageText message){
+        try {
+            execute(message);
+            return 0;
+        } catch (TelegramApiException e) {
+            return -1;
+        }
+
+    }
     public int editMessage(String text, long chatId, int messageId){
         EditMessageText message = createEditMessageObject(text, chatId, messageId);
         try {
@@ -113,16 +125,6 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         }
 
     }
-    //public int editMessage(String text, long chatId, int messageId, InlineKeyboardMarkup keyboard){
-    //    EditMessageText message = createEditMessageObject(text, chatId, messageId);
-    //    message.setReplyMarkup(keyboard);
-    //    try {
-    //        execute(message);
-    //        return 0;
-    //    } catch (TelegramApiException e) {
-    //        return -1;
-    //    }
-    //}
 
     // Удаление сообщения
     public int deleteMessage(long chatId, int messageId){
