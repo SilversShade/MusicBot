@@ -4,13 +4,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import sigamebot.bot.botstate.ITelegramBotState;
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.commands.CancelCommand;
-import sigamebot.bot.userinteraction.ICallbackQueryHandler;
+import sigamebot.bot.handlecallback.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.UpdateProcessor;
-import sigamebot.bot.commands.MenuCommand;
-import sigamebot.bot.commands.SigameBotCommand;
-import sigamebot.bot.commands.StartCommand;
+import sigamebot.bot.commands.*;
+import sigamebot.bot.handlecallback.*;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.CallbackPrefix;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -31,20 +29,24 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
     public static Map<String, SigameBotCommand> commandMap;
-    private static Map<String, Class<? extends ICallbackQueryHandler>> queryHandlerMap;
+    private static Map<String, ICallbackQueryHandler> queryHandlerMap;
     public static Map<Long, ITelegramBotState> chatToBotState;
     public SigameBot() {
         commandMap = Map.of("/start",
                 new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
+                "/solo",
+                new SoloMenuCommand("/solo", "Одиночная игра", this),
                 "/menu",
-                new MenuCommand("/begin", "Начало игры", this),
+                new MenuCommand("/menu", "Меню игры", this),
                 "/cancel",
                 new CancelCommand("/cancel", "Выход из режима ожидания отправки пака", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
-                MenuCommand.class,
-                TelegramGameDisplay.SOLO_GAME_CALLBACK_PREFIX,
-                TelegramGameDisplay.class);
+                new MenuCallbackQueryHandler(this),
+                CallbackPrefix.SOLO_GAME,
+                new SoloGameCallbackQueryHandler(this),
+                CallbackPrefix.SOLO_MENU,
+                new SoloMenuCallbackQueryHandler(this));
 
         chatToBotState = new HashMap<>();
     }
@@ -58,7 +60,8 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
             if (!chatToBotState.containsKey(message.getChatId()))
                 chatToBotState.put(message.getChatId(), SigameBotState.DEFAULT_STATE);
         }
-        UpdateProcessor.processCommands(message, commandMap);
+        if(message != null)
+            UpdateProcessor.processCommands(message, commandMap);
 
         UserFileHandler.handleUserFiles(this, message);
 

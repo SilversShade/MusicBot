@@ -11,7 +11,7 @@ import static sigamebot.utilities.StreamReader.readFromInputStream;
 public class JsonParser {
     public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder){
         var tests = FileParser.getAllFilesFromDir(pathToFolder);
-        String path = pathToFolder + tests.get(gameNumberInFolder).getName();
+        String path = tests.get(gameNumberInFolder).getPath();
         String jsonString;
         try {
             jsonString = readFromInputStream(path);
