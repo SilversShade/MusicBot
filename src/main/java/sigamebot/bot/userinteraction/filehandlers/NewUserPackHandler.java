@@ -9,6 +9,8 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
+import sigamebot.utilities.FileParser;
+import sigamebot.utilities.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,13 +29,7 @@ public class NewUserPackHandler {
 
     public static int getNumberOfPacksInDirectory(String directoryPath) {
         var packsInDirectory = new File(directoryPath).list();
-        return packsInDirectory == null ? 0 : packsInDirectory.length - 1;
-    }
-
-
-    private static boolean createFileForUserPack(int numberOfPacksInDirectory) throws IOException {
-        var newUserPack = new File("src/main/resources/userpacks/" + numberOfPacksInDirectory + ".json");
-        return newUserPack.createNewFile();
+        return packsInDirectory == null ? 0 : packsInDirectory.length;
     }
 
     private static void downloadUserPack(SigameBot bot, Document pack, long chatId, int numberOfPacksInDirectory) {
@@ -54,6 +50,7 @@ public class NewUserPackHandler {
 
             if (SigameBot.chatToBotState.get(chatId) != SigameBotState.PACK_REQUESTED)
                 return;
+
             var pack = message.getDocument();
             if (documentHasWrongExtension(pack, "json")) {
                 respondToWrongExtension(bot, chatId);
@@ -61,18 +58,22 @@ public class NewUserPackHandler {
             }
 
             var numberOfPacksInDirectory = getNumberOfPacksInDirectory("src/main/resources/userpacks/");
-            try {
-                var result = createFileForUserPack(numberOfPacksInDirectory);
-                if (!result) {
-                    bot.sendMessage("Не удалось создать файл для хранения Вашего пака.", chatId);
-                    return;
-                }
-            } catch (IOException e) {
-                bot.sendMessage("Не удалось создать файл для хранения Вашего пака.", chatId);
-                e.printStackTrace();
-            }
+
             downloadUserPack(bot, pack, chatId, numberOfPacksInDirectory);
-            SoloGame.startNewSoloGame(bot, chatId, numberOfPacksInDirectory + 1, "src/main/resources/userpacks/");
+
+            var parsedPack = JsonParser.getGameFromJson(numberOfPacksInDirectory, "src/main/resources/userpacks/");
+
+            try {
+                FileParser.renameFile("src/main/resources/userpacks/" + numberOfPacksInDirectory + ".json",
+                        numberOfPacksInDirectory+1 + "." + parsedPack.name + ".json");
+            } catch (IOException e) {
+                bot.sendMessage("Произошла ошибка во время обработка Вашего пака.", chatId);
+                e.printStackTrace();
+                return;
+            }
+
+            SoloGame.startNewSoloGame(bot, chatId, parsedPack);
+
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
         });
     }

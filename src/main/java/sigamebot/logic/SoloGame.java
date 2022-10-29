@@ -33,6 +33,13 @@ public class SoloGame {
         SoloGame.getOngoingSoloGames().get(chatId).start();
     }
 
+    public static void startNewSoloGame(ITelegramBot bot, long chatId, Category category) {
+        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
+                category,
+                new TelegramGameDisplay(bot, chatId)));
+        SoloGame.getOngoingSoloGames().get(chatId).start();
+    }
+
     public void start(){
         //TODO: validate chosen game
         this.gameDisplay.displayStartMessage();

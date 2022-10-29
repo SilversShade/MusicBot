@@ -1,12 +1,18 @@
 package sigamebot.bot.handlecallback;
 
+import com.google.gson.Gson;
+import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.logic.SoloGame;
 import sigamebot.utilities.CallbackPrefix;
 import sigamebot.utilities.FileParser;
+import sigamebot.utilities.JsonParser;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +26,15 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         var splittedData = callData.split(" ");
         switch (splittedData[1]) {
             case "add_game" -> {
+                try {
+                    createUserpacksDirectoryIfNotPresent();
+                } catch (IOException e) {
+                    bot.sendMessage("Не удалось создать каталог для хранения полтзовательских паков", chatId);
+                    e.printStackTrace();
+                    return;
+                }
                 bot.sendMessage("Отправьте Ваш пак. Если Вы передумали, введите команду /cancel", chatId);
                 SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
-                return;
             }
             case "base" -> sendPacks(splittedData, chatId, "packs");
             case "user_pack" -> sendPacks(splittedData, chatId, "userpacks");
@@ -32,13 +44,20 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             }
         }
     }
+
+    private void createUserpacksDirectoryIfNotPresent() throws IOException {
+        Path pathToUserpacksDirectory = Path.of("src/main/resources/userpacks/");
+        if (Files.notExists(pathToUserpacksDirectory))
+            Files.createDirectory(pathToUserpacksDirectory);
+    }
+
     private void sendErrorMessage(Long chatId){
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         var button = new InlineKeyboardButton();
         button.setText("Вернуться в меню");
         button.setCallbackData(CallbackPrefix.MENU + " /menu");
         buttons.add(List.of(button));
-        bot.sendMessage("Ошибка, игры не найдены", chatId, buttons);
+        bot.sendMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".", chatId, buttons);
     }
     private void sendPacks(String[] splittedData, Long chatId, String type){
         var packs = FileParser.getAllFilesFromDir("src/main/resources/" + type);
@@ -49,10 +68,10 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             sendErrorMessage(chatId);
             return;
         }
-        for(var i = 5 * page + 1; i < Math.min(5 * (page + 1), packs.size()); i++){
+        for(var i = 5 * page; i < Math.min(5 * (page + 1), packs.size()); i++){
             var button = new InlineKeyboardButton();
-            button.setText(i + ") " + packs.get(i).getName());
-            button.setCallbackData(CallbackPrefix.SOLO_MENU + " " + type + " " + (i + 1));
+            button.setText((i+1) + ") " + FilenameUtils.removeExtension(packs.get(i).getName()));
+            button.setCallbackData(CallbackPrefix.SOLO_MENU + " " + type + " " + i);
             buttons.add(List.of(button));
         }
         if(packs.size() > 5){
