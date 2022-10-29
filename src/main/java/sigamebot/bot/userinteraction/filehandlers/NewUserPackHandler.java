@@ -27,7 +27,7 @@ public class NewUserPackHandler {
 
     public static int getNumberOfPacksInDirectory(String directoryPath) {
         var packsInDirectory = new File(directoryPath).list();
-        return packsInDirectory == null ? 0 : packsInDirectory.length;
+        return packsInDirectory == null ? 0 : packsInDirectory.length - 1;
     }
 
 
@@ -72,7 +72,7 @@ public class NewUserPackHandler {
                 e.printStackTrace();
             }
             downloadUserPack(bot, pack, chatId, numberOfPacksInDirectory);
-            SoloGame.startNewSoloGame(bot, chatId, numberOfPacksInDirectory, "src/main/resources/userpacks/");
+            SoloGame.startNewSoloGame(bot, chatId, numberOfPacksInDirectory + 1, "src/main/resources/userpacks/");
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
         });
     }

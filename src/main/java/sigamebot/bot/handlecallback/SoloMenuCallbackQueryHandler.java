@@ -4,31 +4,31 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.logic.SoloGame;
-import sigamebot.logic.scenariologic.Category;
 import sigamebot.utilities.CallbackPrefix;
 import sigamebot.utilities.FileParser;
-import sigamebot.utilities.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
-    private ITelegramBot bot;
+    private final ITelegramBot bot;
     public SoloMenuCallbackQueryHandler(ITelegramBot bot){ this.bot = bot; }
+
+    @Override
     public void handleCallbackQuery(String callData, Integer messageId, Long chatId){
         bot.deleteMessage(chatId, messageId);
-        var splitedData = callData.split(" ");
-        switch (splitedData[1]) {
+        var splittedData = callData.split(" ");
+        switch (splittedData[1]) {
             case "add_game" -> {
                 bot.sendMessage("Отправьте Ваш пак. Если Вы передумали, введите команду /cancel", chatId);
                 SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
                 return;
             }
-            case "base" -> sendPacks(splitedData, chatId, "packs");
-            case "user_pack" -> sendPacks(splitedData, chatId, "userpacks");
+            case "base" -> sendPacks(splittedData, chatId, "packs");
+            case "user_pack" -> sendPacks(splittedData, chatId, "userpacks");
             default -> {
-                String path = "src/main/resources/" + splitedData[1];
-                SoloGame.startNewSoloGame(bot, chatId, Integer.parseInt(splitedData[2]), path);
+                String path = "src/main/resources/" + splittedData[1];
+                SoloGame.startNewSoloGame(bot, chatId, Integer.parseInt(splittedData[2]), path);
             }
         }
     }
@@ -40,18 +40,18 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         buttons.add(List.of(button));
         bot.sendMessage("Ошибка, игры не найдены", chatId, buttons);
     }
-    private void sendPacks(String[] splitedData, Long chatId, String type){
+    private void sendPacks(String[] splittedData, Long chatId, String type){
         var packs = FileParser.getAllFilesFromDir("src/main/resources/" + type);
-        var page = Integer.parseInt(splitedData[2]);
+        var page = Integer.parseInt(splittedData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         if(packs.size() == 0){
             sendErrorMessage(chatId);
             return;
         }
-        for(var i = 5 * page; i < Math.min(5 * (page + 1), packs.size()); i++){
+        for(var i = 5 * page + 1; i < Math.min(5 * (page + 1), packs.size()); i++){
             var button = new InlineKeyboardButton();
-            button.setText((i + 1) + ") " + packs.get(i).getName());
+            button.setText(i + ") " + packs.get(i).getName());
             button.setCallbackData(CallbackPrefix.SOLO_MENU + " " + type + " " + (i + 1));
             buttons.add(List.of(button));
         }
