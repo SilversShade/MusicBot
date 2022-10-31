@@ -9,6 +9,7 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.FileParser;
 import sigamebot.utilities.JsonParser;
 
@@ -72,7 +73,7 @@ public class NewUserPackHandler {
                 return;
             }
 
-            SoloGame.startNewSoloGame(bot, chatId, parsedPack);
+            SoloGame.startNewSoloGame(chatId, parsedPack, new TelegramGameDisplay(bot, chatId));
 
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
         });

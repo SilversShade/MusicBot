@@ -26,17 +26,22 @@ public class SoloGame {
         return ongoingSoloGames;
     }
 
-    public static void startNewSoloGame(ITelegramBot bot, long chatId, int packNumberInDirectory, String pathToPackFolder) {
+    public static void startNewSoloGame(long chatId,
+                                        int packNumberInDirectory,
+                                        String pathToPackFolder,
+                                        IGameDisplay gameDisplay) {
         SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                 JsonParser.getGameFromJson(packNumberInDirectory, pathToPackFolder),
-                new TelegramGameDisplay(bot, chatId)));
+                gameDisplay));
         SoloGame.getOngoingSoloGames().get(chatId).start();
     }
 
-    public static void startNewSoloGame(ITelegramBot bot, long chatId, Category category) {
+    public static void startNewSoloGame(long chatId,
+                                        Category category,
+                                        IGameDisplay gameDisplay) {
         SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
                 category,
-                new TelegramGameDisplay(bot, chatId)));
+                gameDisplay));
         SoloGame.getOngoingSoloGames().get(chatId).start();
     }
 

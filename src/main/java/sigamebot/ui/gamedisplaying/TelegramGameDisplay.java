@@ -9,12 +9,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import sigamebot.utilities.CallbackPrefix;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
     private int messageId;
+
     public TelegramGameDisplay(ITelegramBot bot, long chatId) {
         this.bot = bot;
         this.chatId = chatId;

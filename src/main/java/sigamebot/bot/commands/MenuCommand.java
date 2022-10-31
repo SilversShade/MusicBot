@@ -1,5 +1,6 @@
 package sigamebot.bot.commands;
 
+import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.StreamReader;
@@ -18,6 +19,9 @@ public class MenuCommand extends SigameBotCommand{
     }
     @Override
     public void executeCommand(long chatId){
+        if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
+            return;
+
         String[] menuOpinions = new String[0];
         try {
             menuOpinions = StreamReader.readFromInputStream("src/main/resources/commandmessages/menu.txt")

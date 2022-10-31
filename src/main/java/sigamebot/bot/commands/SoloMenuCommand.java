@@ -1,5 +1,6 @@
 package sigamebot.bot.commands;
 
+import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.CallbackPrefix;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -17,6 +18,9 @@ public class SoloMenuCommand extends SigameBotCommand{
     }
     @Override
     public void executeCommand(long chatId) {
+        if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
+            return;
+
         String[] menuOptions = new String[0];
         try {
             menuOptions = StreamReader.readFromInputStream("src/main/resources/commandmessages/sologamemenu.txt")

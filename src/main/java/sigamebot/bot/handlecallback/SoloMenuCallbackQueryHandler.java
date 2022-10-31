@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.logic.SoloGame;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.CallbackPrefix;
 import sigamebot.utilities.FileParser;
 
@@ -38,7 +39,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             case "user_pack" -> sendPacks(splittedData, chatId, "userpacks");
             default -> {
                 String path = "src/main/resources/" + splittedData[1];
-                SoloGame.startNewSoloGame(bot, chatId, Integer.parseInt(splittedData[2]), path);
+                SoloGame.startNewSoloGame(chatId, Integer.parseInt(splittedData[2]), path, new TelegramGameDisplay(bot, chatId));
             }
         }
     }
