@@ -13,6 +13,6 @@ public class CancelCommand extends SigameBotCommand{
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.PACK_REQUESTED)
             return;
         SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
-        this.bot.sendMessage("Бот вышел из состояния ожидания отправки пака.", chatId);
+        SigameBot.commandMap.get("/solo").executeCommand(chatId);
     }
 }

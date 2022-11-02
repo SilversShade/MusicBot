@@ -21,25 +21,30 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
 
     @Override
     public void handleCallbackQuery(String callData, Integer messageId, Long chatId){
-        bot.deleteMessage(chatId, messageId);
         var splittedData = callData.split(" ");
         switch (splittedData[1]) {
             case "add_game" -> {
                 try {
                     createUserpacksDirectoryIfNotPresent();
                 } catch (IOException e) {
-                    bot.sendMessage("Не удалось создать каталог для хранения полтзовательских паков", chatId);
+                    bot.editMessage("Не удалось создать каталог для хранения полтзовательских паков", chatId, messageId);
                     e.printStackTrace();
                     return;
                 }
-                bot.sendMessage("Отправьте Ваш пак. Если Вы передумали, введите команду /cancel", chatId);
+                List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+                buttons.add(List.of(bot.createButton("Вернуться в меню",
+                        CallbackPrefix.MENU + " /cancel")));
+                bot.editMessage("Отправьте Ваш пак", chatId, messageId, buttons);
                 SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
+                SigameBot.idMessageWithFileRequest.put(chatId, messageId);
             }
-            case "base" -> sendPacks(splittedData, chatId, "packs");
-            case "user_pack" -> sendPacks(splittedData, chatId, "userpacks");
+            case "base" -> sendPacks(splittedData, chatId, messageId, "packs");
+            case "user_pack" -> sendPacks(splittedData, chatId, messageId, "userpacks");
             default -> {
                 String path = "src/main/resources/" + splittedData[1];
-                SoloGame.startNewSoloGame(chatId, Integer.parseInt(splittedData[2]), path, new TelegramGameDisplay(bot, chatId));
+                SoloGame.startNewSoloGame(chatId, Integer.parseInt(splittedData[2]),
+                        path,
+                        new TelegramGameDisplay(bot, chatId, messageId));
             }
         }
     }
@@ -50,22 +55,23 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             Files.createDirectory(pathToUserpacksDirectory);
     }
 
-    private void sendErrorMessage(Long chatId){
+    private void sendErrorMessage(Long chatId, int messageId){
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         var button = new InlineKeyboardButton();
         button.setText("Вернуться в меню");
         button.setCallbackData(CallbackPrefix.MENU + " /menu");
         buttons.add(List.of(button));
-        bot.sendMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".", chatId, buttons);
+        bot.editMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".",
+                chatId, messageId, buttons);
     }
-    private void sendPacks(String[] splittedData, Long chatId, String type){
+    private void sendPacks(String[] splittedData, Long chatId, int messageId, String type){
         var packs = FileParser.getAllFilesFromDir("src/main/resources/" + type);
         var page = Integer.parseInt(splittedData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         if(packs.size() == 0){
-            sendErrorMessage(chatId);
+            sendErrorMessage(chatId, messageId);
             return;
         }
 
@@ -98,6 +104,6 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         button.setText("Назад");
         button.setCallbackData(CallbackPrefix.MENU + " /solo");
         buttons.add(List.of(button));
-        bot.sendMessage("Выберите текст", chatId, buttons);
+        bot.editMessage("Выберите текст", chatId, messageId, buttons);
     }
 }

@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
@@ -15,6 +16,8 @@ import sigamebot.utilities.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class NewUserPackHandler {
@@ -72,9 +75,9 @@ public class NewUserPackHandler {
                 e.printStackTrace();
                 return;
             }
-
-            SoloGame.startNewSoloGame(chatId, parsedPack, new TelegramGameDisplay(bot, chatId));
-
+            bot.deleteMessage(chatId, message.getMessageId());
+            SoloGame.startNewSoloGame(chatId, parsedPack,
+                    new TelegramGameDisplay(bot, chatId, SigameBot.idMessageWithFileRequest.get(chatId)));
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
         });
     }

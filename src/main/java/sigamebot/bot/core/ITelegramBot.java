@@ -14,4 +14,5 @@ public interface ITelegramBot {
     int editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons);
 
     int deleteMessage(long chatId, int messageId);
+    InlineKeyboardButton createButton(String text, String callBackData);
 }

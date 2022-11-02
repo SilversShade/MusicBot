@@ -32,10 +32,9 @@ public class MenuCommand extends SigameBotCommand{
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         for (String menuOpinion : menuOpinions) {
-            var button = new InlineKeyboardButton();
             var opinion = menuOpinion.split(":");
-            button.setText(opinion[0]);
-            button.setCallbackData(CallbackPrefix.MENU + " " + opinion[1]);
+            var button = bot.createButton(opinion[0],
+                    CallbackPrefix.MENU + " " + opinion[1]);
             buttons.add(List.of(button));
         }
 

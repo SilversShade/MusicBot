@@ -12,11 +12,13 @@ import java.util.Map;
 public class SoloGame {
     private final Category scenario;
     private final Player player;
+    private final long chatId;
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
     private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
     public SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay){
-        player = new Player("player", chatId);
+        player = new Player("player");
+        this.chatId = chatId;
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
         this.currentQuestion = 0;
@@ -68,7 +70,7 @@ public class SoloGame {
 
         if (currentQuestion == this.scenario.questions.size()) {
             this.gameDisplay.displayEndMessage(player);
-            ongoingSoloGames.get(this.player.chatId).finish(this.player.chatId);
+            ongoingSoloGames.get(chatId).finish(chatId);
             return;
         }
 

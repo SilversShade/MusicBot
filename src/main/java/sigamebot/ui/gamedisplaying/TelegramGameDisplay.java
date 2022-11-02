@@ -18,9 +18,10 @@ public class TelegramGameDisplay implements IGameDisplay{
     private final long chatId;
     private int messageId;
 
-    public TelegramGameDisplay(ITelegramBot bot, long chatId) {
+    public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
         this.chatId = chatId;
+        this.messageId = messageId;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         startButton.setCallbackData(CallbackPrefix.SOLO_GAME + " start");
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(startButton));
-        messageId = this.bot.sendMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, buttons);
+        this.bot.editMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, messageId, buttons);
     }
     @Override
     public void updateGameStateView(Question currentQuestion, Player player) {
@@ -53,6 +54,13 @@ public class TelegramGameDisplay implements IGameDisplay{
     }
     @Override
     public void displayEndMessage(Player player) {
-        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score, chatId, messageId);
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        var button = this.bot.createButton("Вернуться в меню",
+                CallbackPrefix.MENU + " /menu");
+        buttons.add(List.of(button));
+        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score,
+                chatId,
+                messageId,
+                buttons);
     }
 }

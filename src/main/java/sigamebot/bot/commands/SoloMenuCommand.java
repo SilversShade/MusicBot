@@ -36,6 +36,8 @@ public class SoloMenuCommand extends SigameBotCommand{
             button.setCallbackData(CallbackPrefix.SOLO_MENU + " " + opinion[1]);
             buttons.add(List.of(button));
         }
+        var button = bot.createButton("Назад", CallbackPrefix.MENU + " /menu");
+        buttons.add(List.of(button));
         this.bot.sendMessage("Одиночная игра", chatId, buttons);
     }
 
