@@ -1,6 +1,7 @@
 package sigamebot.utilities;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import sigamebot.logic.scenariologic.Category;
 
 import java.io.IOException;
@@ -12,15 +13,8 @@ public class JsonParser {
 
     public static final Gson GSON = new Gson();
 
-    public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder){
+    public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder) throws IOException{
         var tests = FileParser.getAllFilesFromDir(pathToFolder);
-        String path = tests.get(gameNumberInFolder).getPath();
-        String jsonString;
-        try {
-            jsonString = readFromInputStream(path);
-            return GSON.fromJson(jsonString, Category.class);
-        } catch (IOException e) {
-            return new Category("", new ArrayList<>());
-        }
+        return GSON.fromJson(readFromInputStream(tests.get(gameNumberInFolder).getPath()), Category.class);
     }
 }

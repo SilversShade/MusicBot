@@ -4,7 +4,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
-import sigamebot.utilities.CallbackPrefix;
+import sigamebot.utilities.properties.CallbackPrefix;
+import sigamebot.utilities.properties.CommandNames;
+import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;
@@ -24,9 +26,10 @@ public class StartCommand extends SigameBotCommand{
             return;
         try {
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Меню", CallbackPrefix.MENU + " /menu")));
+            buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Меню",
+                    CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
             this.bot.sendMessage(StreamReader.readFromInputStream(
-                            "src/main/resources/commandmessages/startcommandmessage.txt"),
+                            FilePaths.START_COMMAND_MESSAGE),
                     chatId,buttons);
         } catch (IOException e) {
             this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);

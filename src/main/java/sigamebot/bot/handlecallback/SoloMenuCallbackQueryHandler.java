@@ -6,8 +6,10 @@ import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
-import sigamebot.utilities.CallbackPrefix;
+import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.FileParser;
+import sigamebot.utilities.properties.CommandNames;
+import sigamebot.utilities.properties.FilePaths;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +35,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 }
                 List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
                 buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
-                        CallbackPrefix.MENU + " /cancel")));
+                        CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 bot.editMessage("Отправьте Ваш пак", chatId, messageId, buttons);
                 SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
                 SigameBot.idMessageWithFileRequest.put(chatId, messageId);
@@ -41,7 +43,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             case "base" -> sendPacks(splitData, chatId, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");
             default -> {
-                String path = "src/main/resources/" + splitData[1];
+                String path = FilePaths.RESOURCES_DIRECTORY + splitData[1];
                 SoloGame.startNewSoloGame(chatId, Integer.parseInt(splitData[2]),
                         path,
                         new TelegramGameDisplay(bot, chatId, messageId));
@@ -50,19 +52,20 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
     }
 
     private void createUserpacksDirectoryIfNotPresent() throws IOException {
-        Path pathToUserpacksDirectory = Path.of("src/main/resources/userpacks/");
+        Path pathToUserpacksDirectory = Path.of(FilePaths.USERPACKS_DIRECTORY);
         if (Files.notExists(pathToUserpacksDirectory))
             Files.createDirectory(pathToUserpacksDirectory);
     }
 
     private void sendErrorMessage(Long chatId, int messageId){
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню", CallbackPrefix.MENU + " /menu")));
+        buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
+                CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
         bot.editMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".",
                 chatId, messageId, buttons);
     }
     private void sendPacks(String[] splitData, Long chatId, int messageId, String type){
-        var packs = FileParser.getAllFilesFromDir("src/main/resources/" + type);
+        var packs = FileParser.getAllFilesFromDir(FilePaths.RESOURCES_DIRECTORY + type);
         var page = Integer.parseInt(splitData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
@@ -86,7 +89,8 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             raw.add(ITelegramBot.createInlineKeyboardButton(">", CallbackPrefix.SOLO_MENU + " base " + nextPage));
             buttons.add(raw);
         }
-        buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Назад", CallbackPrefix.MENU + " /solo")));
+        buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Назад",
+                CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME)));
         bot.editMessage("Выберите текст", chatId, messageId, buttons);
     }
 }

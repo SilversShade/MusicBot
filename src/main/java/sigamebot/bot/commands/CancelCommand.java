@@ -2,6 +2,7 @@ package sigamebot.bot.commands;
 
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.utilities.properties.CommandNames;
 
 public class CancelCommand extends SigameBotCommand{
     public CancelCommand(String command, String description, SigameBot bot) {
@@ -13,6 +14,6 @@ public class CancelCommand extends SigameBotCommand{
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.PACK_REQUESTED)
             return;
         SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
-        SigameBot.commandMap.get("/solo").executeCommand(chatId);
+        SigameBot.commandMap.get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatId);
     }
 }

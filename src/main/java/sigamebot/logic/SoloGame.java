@@ -4,6 +4,7 @@ import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.logic.scenariologic.Category;
 import sigamebot.utilities.JsonParser;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,16 @@ public class SoloGame {
                                         int packNumberInDirectory,
                                         String pathToPackFolder,
                                         IGameDisplay gameDisplay) {
+        Category parsedGame;
+        try {
+            parsedGame = JsonParser.getGameFromJson(packNumberInDirectory, pathToPackFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
         SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
-                JsonParser.getGameFromJson(packNumberInDirectory, pathToPackFolder),
+                parsedGame,
                 gameDisplay));
         SoloGame.getOngoingSoloGames().get(chatId).start();
     }

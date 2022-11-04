@@ -3,8 +3,10 @@ package sigamebot.bot.commands;
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
-import sigamebot.utilities.CallbackPrefix;
+import sigamebot.utilities.properties.CallbackPrefix;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import sigamebot.utilities.properties.CommandNames;
+import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.StreamReader;
 
 import javax.inject.Singleton;
@@ -24,8 +26,8 @@ public class SoloMenuCommand extends SigameBotCommand{
 
         String[] menuOptions = new String[0];
         try {
-            menuOptions = StreamReader.readFromInputStream("src/main/resources/commandmessages/sologamemenu.txt")
-                    .split("\n");
+            menuOptions = StreamReader.readFromInputStream(FilePaths.SOLO_MENU_COMMAND_MESSAGE)
+                    .split("\r");
         } catch (IOException e) {
             this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);
         }
@@ -34,7 +36,8 @@ public class SoloMenuCommand extends SigameBotCommand{
             var parsed = menuOption.split(":");
             buttons.add(List.of(ITelegramBot.createInlineKeyboardButton(parsed[0], CallbackPrefix.SOLO_MENU + " " + parsed[1])));
         }
-        var button = ITelegramBot.createInlineKeyboardButton("Назад", CallbackPrefix.MENU + " /menu");
+        var button = ITelegramBot.createInlineKeyboardButton("Назад",
+                CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME);
         buttons.add(List.of(button));
         this.bot.sendMessage("Одиночная игра", chatId, buttons);
     }

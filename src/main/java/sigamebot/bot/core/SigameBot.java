@@ -9,7 +9,7 @@ import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.commands.*;
 import sigamebot.bot.handlecallback.*;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
-import sigamebot.utilities.CallbackPrefix;
+import sigamebot.utilities.properties.CallbackPrefix;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import sigamebot.utilities.properties.CommandNames;
 
 import javax.inject.Singleton;
 import java.util.HashMap;
@@ -33,14 +34,15 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
     public static Map<Long, ITelegramBotState> chatToBotState;
     public static Map<Long, Integer> idMessageWithFileRequest;
     public SigameBot() {
-        commandMap = Map.of("/start",
-                new StartCommand("/start", "Краткое описание бота и список доступных команд", this),
-                "/solo",
-                new SoloMenuCommand("/solo", "Одиночная игра", this),
-                "/menu",
-                new MenuCommand("/menu", "Меню игры", this),
-                "/cancel",
-                new CancelCommand("/cancel", "Выход из режима ожидания отправки пака", this));
+
+        commandMap = Map.of(CommandNames.START_COMMAND_NAME,
+                new StartCommand(CommandNames.START_COMMAND_NAME, "Краткое описание бота и список доступных команд", this),
+                CommandNames.SOLO_MENU_COMMAND_NAME,
+                new SoloMenuCommand(CommandNames.SOLO_MENU_COMMAND_NAME, "Одиночная игра", this),
+                CommandNames.MENU_COMMAND_NAME,
+                new MenuCommand(CommandNames.MENU_COMMAND_NAME, "Меню игры", this),
+                CommandNames.CANCEL_COMMAND_NAME,
+                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Выход из режима ожидания отправки пака", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),

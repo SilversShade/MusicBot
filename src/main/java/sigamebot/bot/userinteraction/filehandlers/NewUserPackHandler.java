@@ -9,8 +9,10 @@ import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
+import sigamebot.logic.scenariologic.Category;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.FileParser;
+import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.JsonParser;
 
 import java.io.File;
@@ -38,7 +40,7 @@ public class NewUserPackHandler {
         getFile.setFileId(pack.getFileId());
         try {
             var filePath = bot.execute(getFile).getFilePath();
-            bot.downloadFile(filePath, new File("src/main/resources/userpacks/" + numberOfPacksInDirectory + ".json"));
+            bot.downloadFile(filePath, new File(FilePaths.USERPACKS_DIRECTORY + numberOfPacksInDirectory + ".json"));
         } catch (TelegramApiException e) {
             bot.sendMessage("Произошла ошибка во время обработки Вашего пака.", chatId);
             e.printStackTrace();
@@ -58,14 +60,20 @@ public class NewUserPackHandler {
                 return;
             }
 
-            var numberOfPacksInDirectory = getNumberOfPacksInDirectory("src/main/resources/userpacks/");
+            var numberOfPacksInDirectory = getNumberOfPacksInDirectory(FilePaths.USERPACKS_DIRECTORY);
 
             downloadUserPack(bot, pack, chatId, numberOfPacksInDirectory);
 
-            var parsedPack = JsonParser.getGameFromJson(numberOfPacksInDirectory, "src/main/resources/userpacks/");
+            Category parsedPack;
+            try {
+                parsedPack = JsonParser.getGameFromJson(numberOfPacksInDirectory, FilePaths.USERPACKS_DIRECTORY);
+            } catch (IOException e) {
+                bot.sendMessage("Не удалось получить игру из json.", chatId);
+                return;
+            }
 
             try {
-                FileParser.renameFile("src/main/resources/userpacks/" + numberOfPacksInDirectory + ".json",
+                FileParser.renameFile(FilePaths.USERPACKS_DIRECTORY + numberOfPacksInDirectory + ".json",
                         numberOfPacksInDirectory+1 + "." + parsedPack.name + ".json");
             } catch (IOException e) {
                 bot.sendMessage("Произошла ошибка во время обработка Вашего пака.", chatId);

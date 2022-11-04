@@ -3,9 +3,10 @@ package sigamebot.bot.commands;
 import sigamebot.bot.botstate.SigameBotState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.StreamReader;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import sigamebot.utilities.CallbackPrefix;
+import sigamebot.utilities.properties.CallbackPrefix;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -24,8 +25,8 @@ public class MenuCommand extends SigameBotCommand{
 
         String[] menuOpinions = new String[0];
         try {
-            menuOpinions = StreamReader.readFromInputStream("src/main/resources/commandmessages/menu.txt")
-                    .split("\n");
+            menuOpinions = StreamReader.readFromInputStream(FilePaths.MENU_COMMAND_MESSAGE)
+                    .split("\r");
         } catch (IOException e) {
             this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);
         }
