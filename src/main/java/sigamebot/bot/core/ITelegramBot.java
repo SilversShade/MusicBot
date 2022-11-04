@@ -14,5 +14,10 @@ public interface ITelegramBot {
     int editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons);
 
     int deleteMessage(long chatId, int messageId);
-    InlineKeyboardButton createButton(String text, String callBackData);
+    static InlineKeyboardButton createInlineKeyboardButton(String text, String callBackData) {
+        var button = new InlineKeyboardButton();
+        button.setCallbackData(callBackData);
+        button.setText(text);
+        return button;
+    }
 }

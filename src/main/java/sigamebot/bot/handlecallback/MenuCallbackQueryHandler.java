@@ -10,10 +10,10 @@ public class MenuCallbackQueryHandler implements ICallbackQueryHandler{
     }
     @Override
     public void handleCallbackQuery(String callData, Integer messageId, Long chatId){
-        var splittedData = callData.split(" ");
-        if(SigameBot.commandMap.containsKey(splittedData[1])) {
+        var splitData = callData.split(" ");
+        if(SigameBot.commandMap.containsKey(splitData[1])) {
             bot.deleteMessage(chatId, messageId);
-            SigameBot.commandMap.get(splittedData[1]).executeCommand(chatId);
+            SigameBot.commandMap.get(splitData[1]).executeCommand(chatId);
         }
         else
             bot.editMessage("В разработке", chatId, messageId);

@@ -1,6 +1,7 @@
 package sigamebot.bot.commands;
 
 import sigamebot.bot.botstate.SigameBotState;
+import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.CallbackPrefix;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -30,13 +31,10 @@ public class SoloMenuCommand extends SigameBotCommand{
         }
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         for (String menuOption : menuOptions) {
-            var button = new InlineKeyboardButton();
-            var opinion = menuOption.split(":");
-            button.setText(opinion[0]);
-            button.setCallbackData(CallbackPrefix.SOLO_MENU + " " + opinion[1]);
-            buttons.add(List.of(button));
+            var parsed = menuOption.split(":");
+            buttons.add(List.of(ITelegramBot.createInlineKeyboardButton(parsed[0], CallbackPrefix.SOLO_MENU + " " + parsed[1])));
         }
-        var button = bot.createButton("Назад", CallbackPrefix.MENU + " /menu");
+        var button = ITelegramBot.createInlineKeyboardButton("Назад", CallbackPrefix.MENU + " /menu");
         buttons.add(List.of(button));
         this.bot.sendMessage("Одиночная игра", chatId, buttons);
     }

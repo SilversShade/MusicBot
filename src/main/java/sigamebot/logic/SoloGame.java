@@ -1,9 +1,7 @@
 package sigamebot.logic;
 
-import sigamebot.bot.core.ITelegramBot;
 import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.logic.scenariologic.Category;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.JsonParser;
 
 import java.util.HashMap;

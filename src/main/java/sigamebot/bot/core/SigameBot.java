@@ -45,7 +45,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),
                 CallbackPrefix.SOLO_GAME,
-                new SoloGameCallbackQueryHandler(this),
+                new SoloGameCallbackQueryHandler(),
                 CallbackPrefix.SOLO_MENU,
                 new SoloMenuCallbackQueryHandler(this));
 
@@ -62,13 +62,15 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
             if (!chatToBotState.containsKey(message.getChatId()))
                 chatToBotState.put(message.getChatId(), SigameBotState.DEFAULT_STATE);
         }
-        if(message != null)
+
+        if(message != null && message.getText() != null && commandMap.containsKey(message.getText()))
             UpdateProcessor.processCommands(message, commandMap);
 
-        UserFileHandler.handleUserFiles(this, message);
+        if (message != null && message.hasDocument())
+            UserFileHandler.handleUserFiles(this, message);
 
         if (update.hasCallbackQuery())
-            UpdateProcessor.processCallbackQuery(this, update, queryHandlerMap);
+            UpdateProcessor.processCallbackQuery(update, queryHandlerMap);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
             return -1;
         }
     }
-    // Редактирование сообщения
+
     public int editMessage(String text, long chatId, int messageId){
         EditMessageText message = createEditMessageObject(text, chatId, messageId);
         try {
@@ -127,7 +129,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
 
     }
 
-    // Удаление сообщения
+
     public int deleteMessage(long chatId, int messageId) {
         DeleteMessage message = new DeleteMessage();
         message.setChatId(chatId);
@@ -140,14 +142,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         }
 
     }
-    public InlineKeyboardButton createButton(String text, String callBackData)
-    {
-        var button = new InlineKeyboardButton();
-        button.setCallbackData(callBackData);
-        button.setText(text);
-        return button;
-    }
-    // Дополнительные методы
+
     private SendMessage createSendMessageObject(String text, long chatId){
         SendMessage message = new SendMessage();
         message.setText(text);
@@ -155,6 +150,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         message.enableHtml(true);
         return message;
     }
+
     private EditMessageText createEditMessageObject(String text, long chatId, int messageId){
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);

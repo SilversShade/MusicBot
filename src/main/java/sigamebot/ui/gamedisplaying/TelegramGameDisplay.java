@@ -1,22 +1,18 @@
 package sigamebot.ui.gamedisplaying;
 
-import sigamebot.bot.handlecallback.ICallbackQueryHandler;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.logic.Player;
-import sigamebot.logic.SoloGame;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.utilities.CallbackPrefix;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
-    private int messageId;
+    private final int messageId;
 
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
@@ -55,7 +51,7 @@ public class TelegramGameDisplay implements IGameDisplay{
     @Override
     public void displayEndMessage(Player player) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        var button = this.bot.createButton("Вернуться в меню",
+        var button = ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
                 CallbackPrefix.MENU + " /menu");
         buttons.add(List.of(button));
         this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score,
