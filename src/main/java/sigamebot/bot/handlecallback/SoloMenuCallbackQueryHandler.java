@@ -64,6 +64,18 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         bot.editMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".",
                 chatId, messageId, buttons);
     }
+
+    private List<InlineKeyboardButton> createNavigationInterface(int pageNumber, int maxPageNumber) {
+        List<InlineKeyboardButton> raw = new ArrayList<>();
+        int previousPage = pageNumber - 1 < 0 ? maxPageNumber - 1 : pageNumber - 1;
+        int nextPage = pageNumber + 1 > maxPageNumber - 1 ? 0 : pageNumber + 1;
+        raw.add(ITelegramBot.createInlineKeyboardButton("<", CallbackPrefix.SOLO_MENU + " base " + previousPage));
+        raw.add(ITelegramBot.createInlineKeyboardButton((pageNumber + 1) + "/" + maxPageNumber,
+                CallbackPrefix.SOLO_MENU + " base " + pageNumber));
+        raw.add(ITelegramBot.createInlineKeyboardButton(">", CallbackPrefix.SOLO_MENU + " base " + nextPage));
+        return raw;
+    }
+
     private void sendPacks(String[] splitData, Long chatId, int messageId, String type){
         var packs = FileParser.getAllFilesFromDir(FilePaths.RESOURCES_DIRECTORY + type);
         var page = Integer.parseInt(splitData[2]);
@@ -80,15 +92,9 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                     CallbackPrefix.SOLO_MENU + " " + type + " " + i)));
         }
 
-        if(packs.size() > 5){
-            List<InlineKeyboardButton> raw = new ArrayList<>();
-            int previousPage = page - 1 < 0 ? maxPage - 1 : page - 1;
-            int nextPage = page + 1 > maxPage - 1 ? 0 : page + 1;
-            raw.add(ITelegramBot.createInlineKeyboardButton("<", CallbackPrefix.SOLO_MENU + " base " + previousPage));
-            raw.add(ITelegramBot.createInlineKeyboardButton((page + 1) + "/" + maxPage, CallbackPrefix.SOLO_MENU + " base " + page));
-            raw.add(ITelegramBot.createInlineKeyboardButton(">", CallbackPrefix.SOLO_MENU + " base " + nextPage));
-            buttons.add(raw);
-        }
+        if(packs.size() > 5)
+            buttons.add(createNavigationInterface(page, maxPage));
+
         buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Назад",
                 CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME)));
         bot.editMessage("Выберите текст", chatId, messageId, buttons);
