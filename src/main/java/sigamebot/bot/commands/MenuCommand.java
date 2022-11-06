@@ -20,6 +20,7 @@ public class MenuCommand extends SigameBotCommand{
     }
     @Override
     public void executeCommand(long chatId){
+        var display = SigameBot.displays.get(chatId);
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
             return;
 
@@ -39,7 +40,7 @@ public class MenuCommand extends SigameBotCommand{
             buttons.add(List.of(button));
         }
 
-        this.bot.sendMessage("Меню игры:", chatId, buttons);
+        display.updateMenuMessage("Меню игры:", buttons);
     }
 
 }

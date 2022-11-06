@@ -48,6 +48,10 @@ public class TelegramGameDisplay implements IGameDisplay{
                 answerOptionsButtons);
     }
     @Override
+    public void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons){
+        this.bot.editMessage(text, chatId, messageId, buttons);
+    }
+    @Override
     public void displayEndMessage(Player player) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         var button = ITelegramBot.createInlineKeyboardButton("Вернуться в меню",

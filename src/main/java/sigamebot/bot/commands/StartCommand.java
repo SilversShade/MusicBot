@@ -22,15 +22,15 @@ public class StartCommand extends SigameBotCommand{
 
     @Override
     public void executeCommand(long chatId) {
+        var display = SigameBot.displays.get(chatId);
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
             return;
         try {
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
             buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Меню",
                     CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
-            this.bot.sendMessage(StreamReader.readFromInputStream(
-                            FilePaths.START_COMMAND_MESSAGE),
-                    chatId,buttons);
+            display.updateMenuMessage(StreamReader.readFromInputStream(
+                            FilePaths.START_COMMAND_MESSAGE),buttons);
         } catch (IOException e) {
             this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);
         }

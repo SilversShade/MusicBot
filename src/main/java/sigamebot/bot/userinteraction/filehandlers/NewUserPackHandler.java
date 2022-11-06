@@ -81,8 +81,7 @@ public class NewUserPackHandler {
                 return;
             }
             bot.deleteMessage(chatId, message.getMessageId());
-            SoloGame.startNewSoloGame(chatId, parsedPack,
-                    new TelegramGameDisplay(bot, chatId, SigameBot.idMessageWithFileRequest.get(chatId)));
+            SoloGame.startNewSoloGame(chatId, parsedPack, SigameBot.displays.get(chatId));
             SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
         });
     }

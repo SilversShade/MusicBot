@@ -23,6 +23,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
 
     @Override
     public void handleCallbackQuery(String callData, Integer messageId, Long chatId){
+        var display = SigameBot.displays.get(chatId);
         var splitData = callData.split(" ");
         switch (splitData[1]) {
             case "add_game" -> {
@@ -36,9 +37,8 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
                 buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
-                bot.editMessage("Отправьте Ваш пак", chatId, messageId, buttons);
+                display.updateMenuMessage("Отправьте Ваш пак", buttons);
                 SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
-                SigameBot.idMessageWithFileRequest.put(chatId, messageId);
             }
             case "base" -> sendPacks(splitData, chatId, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");
@@ -77,6 +77,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
     }
 
     private void sendPacks(String[] splitData, Long chatId, int messageId, String type){
+        var display = SigameBot.displays.get(chatId);
         var packs = FileParser.getAllFilesFromDir(FilePaths.RESOURCES_DIRECTORY + type);
         var page = Integer.parseInt(splitData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
@@ -97,6 +98,6 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
 
         buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Назад",
                 CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME)));
-        bot.editMessage("Выберите текст", chatId, messageId, buttons);
+        display.updateMenuMessage("Выберите текст", buttons);
     }
 }

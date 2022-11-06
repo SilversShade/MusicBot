@@ -21,6 +21,7 @@ public class SoloMenuCommand extends SigameBotCommand{
     }
     @Override
     public void executeCommand(long chatId) {
+        var display = SigameBot.displays.get(chatId);
         if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
             return;
 
@@ -39,7 +40,7 @@ public class SoloMenuCommand extends SigameBotCommand{
         var button = ITelegramBot.createInlineKeyboardButton("Назад",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME);
         buttons.add(List.of(button));
-        this.bot.sendMessage("Одиночная игра", chatId, buttons);
+        display.updateMenuMessage("Одиночная игра", buttons);
     }
 
 }

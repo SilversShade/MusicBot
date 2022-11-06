@@ -9,6 +9,7 @@ import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.commands.*;
 import sigamebot.bot.handlecallback.*;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -32,7 +33,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
     public static Map<String, SigameBotCommand> commandMap;
     private static Map<String, ICallbackQueryHandler> queryHandlerMap;
     public static Map<Long, ITelegramBotState> chatToBotState;
-    public static Map<Long, Integer> idMessageWithFileRequest;
+    public static Map<Long, TelegramGameDisplay> displays;
     public SigameBot() {
 
         commandMap = Map.of(CommandNames.START_COMMAND_NAME,
@@ -52,21 +53,27 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
                 new SoloMenuCallbackQueryHandler(this));
 
         chatToBotState = new HashMap<>();
-        idMessageWithFileRequest = new HashMap<>();
+        displays = new HashMap<>();
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         Message message = null;
-
         if (update.hasMessage()) {
             message = update.getMessage();
             if (!chatToBotState.containsKey(message.getChatId()))
                 chatToBotState.put(message.getChatId(), SigameBotState.DEFAULT_STATE);
         }
+        if(message != null && !displays.containsKey(message.getChatId())){
+            var messageId = sendMessage("Start message", message.getChatId());
+            displays.put(message.getChatId(),
+                    new TelegramGameDisplay(this, message.getChatId(), messageId));
+        }
 
-        if(message != null && message.getText() != null && commandMap.containsKey(message.getText()))
+        if(message != null && message.getText() != null && commandMap.containsKey(message.getText())){
             UpdateProcessor.processCommands(message, commandMap);
+            deleteMessage(message.getChatId(), message.getMessageId());
+        }
 
         if (message != null && message.hasDocument())
             UserFileHandler.handleUserFiles(this, message);
@@ -158,6 +165,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         message.setChatId(chatId);
         message.setText(text);
         message.setMessageId(messageId);
+        message.enableHtml(true);
         return message;
     }
 }
