@@ -9,9 +9,9 @@ public interface ITelegramBot {
 
     int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons);
 
-    int editMessage(String text, long chatId, int messageId);
+    boolean editMessage(String text, long chatId, int messageId);
 
-    int editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons);
+    boolean editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons);
 
     int deleteMessage(long chatId, int messageId);
     static InlineKeyboardButton createInlineKeyboardButton(String text, String callBackData) {

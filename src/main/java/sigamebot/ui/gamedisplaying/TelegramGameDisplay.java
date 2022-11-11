@@ -1,5 +1,6 @@
 package sigamebot.ui.gamedisplaying;
 
+import sigamebot.bot.botstate.classes.FileRequestState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
@@ -13,8 +14,8 @@ import java.util.List;
 public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
-    private final int messageId;
-
+    private int messageId;
+    public FileRequestState stageFileRequest = new FileRequestState();
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
         this.chatId = chatId;
@@ -49,7 +50,8 @@ public class TelegramGameDisplay implements IGameDisplay{
     }
     @Override
     public void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons){
-        this.bot.editMessage(text, chatId, messageId, buttons);
+        if(!this.bot.editMessage(text, chatId, messageId, buttons))
+            messageId = this.bot.sendMessage(text, chatId, buttons);
     }
     @Override
     public void displayEndMessage(Player player) {

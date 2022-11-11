@@ -38,7 +38,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
-                SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
+                SigameBot.displays.get(chatId).stageFileRequest.next();
             }
             case "base" -> sendPacks(splitData, chatId, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");

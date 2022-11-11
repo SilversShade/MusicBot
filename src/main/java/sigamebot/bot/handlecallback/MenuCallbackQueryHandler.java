@@ -27,7 +27,7 @@ public class MenuCallbackQueryHandler implements ICallbackQueryHandler{
             buttons.add(List.of(ITelegramBot.
                     createInlineKeyboardButton("Меню",
                             CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
-            bot.editMessage("В разработке", chatId, messageId);
+            bot.editMessage("В разработке", chatId, messageId, buttons);
 
         }
     }

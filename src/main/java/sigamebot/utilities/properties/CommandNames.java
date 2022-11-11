@@ -9,4 +9,5 @@ public class CommandNames {
     public static final String SOLO_MENU_COMMAND_NAME = resourceBundle.getString("solo_menu");
     public static final String MENU_COMMAND_NAME = resourceBundle.getString("menu");
     public static final String CANCEL_COMMAND_NAME = resourceBundle.getString("cancel");
+    public static final String ONLINE_MENU_COMMAND_NAME = resourceBundle.getString("online_menu");
 }

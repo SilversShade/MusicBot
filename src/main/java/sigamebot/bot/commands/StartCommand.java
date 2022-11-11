@@ -1,7 +1,7 @@
 package sigamebot.bot.commands;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import sigamebot.bot.botstate.SigameBotState;
+import sigamebot.bot.botstate.SigameBotFileRequestStage;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -23,7 +23,7 @@ public class StartCommand extends SigameBotCommand{
     @Override
     public void executeCommand(long chatId) {
         var display = SigameBot.displays.get(chatId);
-        if (SigameBot.chatToBotState.get(chatId) != SigameBotState.DEFAULT_STATE)
+        if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.DEFAULT_STATE)
             return;
         try {
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();

@@ -1,6 +1,6 @@
 package sigamebot.bot.commands;
 
-import sigamebot.bot.botstate.SigameBotState;
+import sigamebot.bot.botstate.SigameBotFileRequestStage;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.properties.CommandNames;
 
@@ -11,9 +11,9 @@ public class CancelCommand extends SigameBotCommand{
 
     @Override
     public void executeCommand(long chatId) {
-        if (SigameBot.chatToBotState.get(chatId) != SigameBotState.PACK_REQUESTED)
+        if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.PACK_REQUESTED)
             return;
-        SigameBot.chatToBotState.put(chatId, SigameBot.chatToBotState.get(chatId).nextState());
+        SigameBot.displays.get(chatId).stageFileRequest.next();
         SigameBot.commandMap.get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatId);
     }
 }
