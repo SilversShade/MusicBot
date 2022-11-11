@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import sigamebot.bot.botstate.SigameBotFileRequestStage;
+import sigamebot.bot.botstate.FileRequestStage;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
@@ -50,7 +50,7 @@ public class NewUserPackHandler {
         UpdateProcessor.handleUserFile(() -> {
             var chatId = message.getChatId();
 
-            if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.PACK_REQUESTED)
+            if (SigameBot.displays.get(chatId).stageFileRequest.getStage() != FileRequestStage.PACK_REQUESTED)
                 return;
 
             var pack = message.getDocument();

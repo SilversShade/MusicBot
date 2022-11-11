@@ -1,15 +1,15 @@
 package sigamebot.bot.botstate;
 
-public enum SigameBotFileRequestStage implements ITelegramBotState {
+public enum FileRequestStage implements ITelegramBotStage {
     PACK_REQUESTED {
         @Override
-        public ITelegramBotState nextState() {
+        public ITelegramBotStage nextState() {
             return DEFAULT_STATE;
         }
     },
     DEFAULT_STATE {
         @Override
-        public ITelegramBotState nextState() {
+        public ITelegramBotStage nextState() {
             return PACK_REQUESTED;
         }
     }

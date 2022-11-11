@@ -1,8 +1,6 @@
 package sigamebot.bot.core;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
-import sigamebot.bot.botstate.ITelegramBotState;
-import sigamebot.bot.botstate.SigameBotFileRequestStage;
 import sigamebot.bot.commands.CancelCommand;
 import sigamebot.bot.handlecallback.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.UpdateProcessor;

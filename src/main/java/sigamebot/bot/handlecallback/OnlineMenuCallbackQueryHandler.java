@@ -20,6 +20,7 @@ public class OnlineMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Назад",
                         CallbackPrefix.MENU + CommandNames.ONLINE_MENU_COMMAND_NAME)));
                 display.updateMenuMessage(text, buttons);
+                display.stageLineRequest.next();
             }
         }
     }

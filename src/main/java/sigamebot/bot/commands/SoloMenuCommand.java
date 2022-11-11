@@ -1,6 +1,6 @@
 package sigamebot.bot.commands;
 
-import sigamebot.bot.botstate.SigameBotFileRequestStage;
+import sigamebot.bot.botstate.FileRequestStage;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -22,7 +22,7 @@ public class SoloMenuCommand extends SigameBotCommand{
     @Override
     public void executeCommand(long chatId) {
         var display = SigameBot.displays.get(chatId);
-        if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.DEFAULT_STATE)
+        if (SigameBot.displays.get(chatId).stageFileRequest.getStage() != FileRequestStage.DEFAULT_STATE)
             return;
 
         String[] menuOptions = new String[0];

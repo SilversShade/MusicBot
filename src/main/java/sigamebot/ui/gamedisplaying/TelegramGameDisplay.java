@@ -1,8 +1,9 @@
 package sigamebot.ui.gamedisplaying;
 
-import sigamebot.bot.botstate.classes.FileRequestState;
+import sigamebot.bot.botstate.automats.FileRequest;
+import sigamebot.bot.botstate.automats.IAutomats;
+import sigamebot.bot.botstate.automats.LineRequest;
 import sigamebot.bot.core.ITelegramBot;
-import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -15,7 +16,8 @@ public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
     private int messageId;
-    public FileRequestState stageFileRequest = new FileRequestState();
+    public IAutomats stageFileRequest = new FileRequest();
+    public IAutomats stageLineRequest = new LineRequest();
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
         this.chatId = chatId;
@@ -31,7 +33,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         this.bot.editMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, messageId, buttons);
     }
     @Override
-    public void updateGameStateView(Question currentQuestion, Player player) {
+    public void updateGameStateView(Question currentQuestion, int score) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             answerOptionsButtons.add(List.of(ITelegramBot.createInlineKeyboardButton(String.format("%d. %s", i+1,
@@ -43,7 +45,7 @@ public class TelegramGameDisplay implements IGameDisplay{
                 + currentQuestion.questionDescription
                 + "\n\n"
                 + "Текущее количество очков игрока: "
-                + player.score,
+                + score,
                 chatId,
                 messageId,
                 answerOptionsButtons);
@@ -54,12 +56,12 @@ public class TelegramGameDisplay implements IGameDisplay{
             messageId = this.bot.sendMessage(text, chatId, buttons);
     }
     @Override
-    public void displayEndMessage(Player player) {
+    public void displayEndMessage(int score) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         var button = ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME);
         buttons.add(List.of(button));
-        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score,
+        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + score,
                 chatId,
                 messageId,
                 buttons);

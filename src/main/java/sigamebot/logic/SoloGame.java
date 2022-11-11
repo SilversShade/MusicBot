@@ -10,13 +10,12 @@ import java.util.Map;
 
 public class SoloGame {
     private final Category scenario;
-    private final Player player;
+    private int score;
     private final long chatId;
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
     private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
     public SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay){
-        player = new Player("player");
         this.chatId = chatId;
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
@@ -65,23 +64,23 @@ public class SoloGame {
 
     public void nextQuestion(String playerResponse) {
         if (currentQuestion == 0) {
-            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.score);
             currentQuestion++;
             return;
         }
 
         var previousQuestion = this.scenario.questions.get(currentQuestion-1);
         if (playerResponse.equals(previousQuestion.correctAnswer))
-            this.player.score += previousQuestion.cost;
-        else this.player.score -= previousQuestion.cost;
+            this.score += previousQuestion.cost;
+        else this.score -= previousQuestion.cost;
 
         if (currentQuestion == this.scenario.questions.size()) {
-            this.gameDisplay.displayEndMessage(player);
+            this.gameDisplay.displayEndMessage(score);
             ongoingSoloGames.get(chatId).finish(chatId);
             return;
         }
 
-        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.score);
         currentQuestion++;
     }
 }
