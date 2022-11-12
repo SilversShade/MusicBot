@@ -12,4 +12,5 @@ public class FilePaths {
     public static final String START_COMMAND_MESSAGE = resourceBundle.getString("startcommandmessage");
     public static final String RESOURCES_DIRECTORY = resourceBundle.getString("resources");
     public static final String USERPACKS_DIRECTORY = resourceBundle.getString("userpacks");
+    public static final String ADD_GAME_COMMAND_MESSAGE = resourceBundle.getString("addgamecommandmessage");
 }

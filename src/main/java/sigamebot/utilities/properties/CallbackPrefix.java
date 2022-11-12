@@ -11,4 +11,6 @@ public class CallbackPrefix {
     public static final String ONLINE_GAME = resourceBundle.getString("online_game");
     public static final String SOLO_MENU = resourceBundle.getString("solo_menu");
     public static final String ONLINE_MENU = resourceBundle.getString("online_menu");
+
+    public static final String ADD_GAME = resourceBundle.getString("add_game");
 }

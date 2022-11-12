@@ -1,6 +1,9 @@
 package sigamebot.bot.core;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import sigamebot.bot.addgame.Logic;
 import sigamebot.bot.botstate.ITelegramBotState;
 import sigamebot.bot.botstate.SigameBotFileRequestStage;
 import sigamebot.bot.commands.CancelCommand;
@@ -22,17 +25,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import sigamebot.utilities.properties.CommandNames;
 
 import javax.inject.Singleton;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Singleton
-public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
+public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
     private static final String TOKEN = System.getenv("myBot");
     private static final String NAME = "SIGame Bot";
     public static Map<String, SigameBotCommand> commandMap;
     private static Map<String, ICallbackQueryHandler> queryHandlerMap;
     public static Map<Long, TelegramGameDisplay> displays;
+    private final Logic addGameLogic = new Logic(this);
+
     public SigameBot() {
         commandMap = Map.of(CommandNames.START_COMMAND_NAME,
                 new StartCommand(CommandNames.START_COMMAND_NAME, "Краткое описание бота и список доступных команд", this),
@@ -43,7 +50,9 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
                 CommandNames.CANCEL_COMMAND_NAME,
                 new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Выход из режима ожидания отправки пака", this),
                 CommandNames.ONLINE_MENU_COMMAND_NAME,
-                new OnlineMenuCommand(CommandNames.ONLINE_MENU_COMMAND_NAME, "Онлайн игра", this));
+                new OnlineMenuCommand(CommandNames.ONLINE_MENU_COMMAND_NAME, "Онлайн игра", this),
+                CommandNames.ADD_GAME_COMMAND,
+                new AddGameCommand(CommandNames.ADD_GAME_COMMAND, "Добавление новой игры", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),
@@ -61,17 +70,31 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         if (update.hasMessage()) {
             message = update.getMessage();
         }
-        if(message != null){
-            if(!displays.containsKey(message.getChatId())){
+        if (message != null) {
+            if (!displays.containsKey(message.getChatId())) {
                 var messageId = sendMessage("Start message", message.getChatId());
                 displays.put(message.getChatId(),
                         new TelegramGameDisplay(this, message.getChatId(), messageId));
             }
-            if(message.getText() != null && commandMap.containsKey(message.getText())){
+            if (message.getText() != null && commandMap.containsKey(message.getText())) {
                 UpdateProcessor.processCommands(message, commandMap);
                 deleteMessage(message.getChatId(), message.getMessageId());
+                if (Objects.equals(message.getText(), CommandNames.ADD_GAME_COMMAND)) {
+                    try {
+                        addGameLogic.init(message);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
+            if (message.getText() != null && !commandMap.containsKey(message.getText()) && addGameLogic.currentState != null) {
+                try {
+                    addGameLogic.processMessage(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
+            }
             if (message.hasDocument())
                 UserFileHandler.handleUserFiles(this, message);
 
@@ -93,7 +116,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
     }
 
     // Отправка сообщений
-    public int sendMessage(String text, long chatId){
+    public int sendMessage(String text, long chatId) {
         SendMessage message = createSendMessageObject(text, chatId);
         try {
             return execute(message).getMessageId();
@@ -102,7 +125,8 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         }
 
     }
-    public int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons){
+
+    public int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons) {
         SendMessage message = createSendMessageObject(text, chatId);
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         keyboard.setKeyboard(buttons);
@@ -114,7 +138,19 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         }
     }
 
-    public boolean editMessage(String text, long chatId, int messageId){
+    public int sendDocument(InputFile document, long chatId) {
+
+        SendDocument message = new SendDocument();
+        message.setChatId(chatId);
+        message.setDocument(document);
+        try {
+            return execute(message).getMessageId();
+        } catch (TelegramApiException e) {
+            return -1;
+        }
+    }
+
+    public boolean editMessage(String text, long chatId, int messageId) {
         EditMessageText message = createEditMessageObject(text, chatId, messageId);
         try {
             execute(message);
@@ -124,7 +160,8 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         }
 
     }
-    public boolean editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons){
+
+    public boolean editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons) {
         EditMessageText message = createEditMessageObject(text, chatId, messageId);
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         keyboard.setKeyboard(buttons);
@@ -153,7 +190,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
 
     }
 
-    private SendMessage createSendMessageObject(String text, long chatId){
+    private SendMessage createSendMessageObject(String text, long chatId) {
         SendMessage message = new SendMessage();
         message.setText(text);
         message.setChatId(chatId);
@@ -161,7 +198,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot{
         return message;
     }
 
-    private EditMessageText createEditMessageObject(String text, long chatId, int messageId){
+    private EditMessageText createEditMessageObject(String text, long chatId, int messageId) {
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
