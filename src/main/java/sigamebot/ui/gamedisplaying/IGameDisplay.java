@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IGameDisplay {
     void displayStartMessage();
-    void updateGameStateView(Question currentQuestion, int score);
+    void updateSoloGameStateView(Question currentQuestion, int score);
     void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons);
     void displayEndMessage(int score);
 }

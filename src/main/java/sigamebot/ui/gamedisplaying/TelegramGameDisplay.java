@@ -4,6 +4,7 @@ import sigamebot.bot.botstate.automats.FileRequest;
 import sigamebot.bot.botstate.automats.IAutomats;
 import sigamebot.bot.botstate.automats.LineRequest;
 import sigamebot.bot.core.ITelegramBot;
+import sigamebot.logic.LineRequestTypes;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -18,6 +19,7 @@ public class TelegramGameDisplay implements IGameDisplay{
     private int messageId;
     public IAutomats stageFileRequest = new FileRequest();
     public IAutomats stageLineRequest = new LineRequest();
+    public LineRequestTypes lineType = LineRequestTypes.NONE;
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
         this.chatId = chatId;
@@ -33,7 +35,7 @@ public class TelegramGameDisplay implements IGameDisplay{
         this.bot.editMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, messageId, buttons);
     }
     @Override
-    public void updateGameStateView(Question currentQuestion, int score) {
+    public void updateSoloGameStateView(Question currentQuestion, int score) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
         for (var i=0; i<currentQuestion.answerOptions.size(); i++) {
             answerOptionsButtons.add(List.of(ITelegramBot.createInlineKeyboardButton(String.format("%d. %s", i+1,

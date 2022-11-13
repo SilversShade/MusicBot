@@ -64,7 +64,7 @@ public class SoloGame {
 
     public void nextQuestion(String playerResponse) {
         if (currentQuestion == 0) {
-            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.score);
+            this.gameDisplay.updateSoloGameStateView(scenario.questions.get(currentQuestion), this.score);
             currentQuestion++;
             return;
         }
@@ -80,7 +80,7 @@ public class SoloGame {
             return;
         }
 
-        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.score);
+        this.gameDisplay.updateSoloGameStateView(scenario.questions.get(currentQuestion), this.score);
         currentQuestion++;
     }
 }

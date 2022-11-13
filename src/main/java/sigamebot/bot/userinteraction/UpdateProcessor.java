@@ -3,6 +3,7 @@ package sigamebot.bot.userinteraction;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import sigamebot.bot.commands.SigameBotCommand;
+import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.handlecallback.ICallbackQueryHandler;
 import sigamebot.bot.userinteraction.filehandlers.IFileHandler;
 
@@ -21,7 +22,9 @@ public class UpdateProcessor {
             queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatId);
         }
     }
+    public static void processLine(Message message){
 
+    }
     public static void handleUserFile(IFileHandler handler) {
         handler.handleFile();
     }
