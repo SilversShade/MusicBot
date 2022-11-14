@@ -19,6 +19,6 @@ public class AddGameCommand extends SigameBotCommand {
         var display = SigameBot.displays.get(chatId);
         if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.DEFAULT_STATE)
             return;
-            AddGame game = new AddGame();
+        AddGame game = new AddGame();
     }
 }

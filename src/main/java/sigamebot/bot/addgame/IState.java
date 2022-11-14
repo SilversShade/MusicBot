@@ -7,6 +7,6 @@ import sigamebot.bot.core.ITelegramBot;
 import java.io.IOException;
 
 interface IState {
-    public void action(ITelegramBot bot, Message msg, Logic logic, Game game) throws IOException;
+    void action(ITelegramBot bot, Message msg, Logic logic, Game game) throws IOException;
 
 }

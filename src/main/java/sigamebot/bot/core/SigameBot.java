@@ -33,7 +33,7 @@ import java.util.Objects;
 
 @Singleton
 public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
-    private static final String TOKEN = System.getenv("myBot");
+    private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
     public static Map<String, SigameBotCommand> commandMap;
     private static Map<String, ICallbackQueryHandler> queryHandlerMap;

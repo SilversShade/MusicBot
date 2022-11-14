@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class Logic {
-    private ITelegramBot bot;
+    private final ITelegramBot bot;
     public IState currentState;
-    private Game game;
+    private final Game game;
     public Logic(ITelegramBot bot){
         this.game = new Game();
         this.bot=bot;
