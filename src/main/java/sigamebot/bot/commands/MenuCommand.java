@@ -3,6 +3,7 @@ package sigamebot.bot.commands;
 import sigamebot.bot.botstate.SigameBotFileRequestStage;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.utilities.properties.CommandNames;
 import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.StreamReader;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -15,6 +16,10 @@ import java.util.List;
 
 @Singleton
 public class MenuCommand extends SigameBotCommand{
+
+    public static final List<InlineKeyboardButton> BACK_BUTTON = List.of(ITelegramBot.createInlineKeyboardButton("Назад",
+            CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME));
+
     public MenuCommand(String command, String description, SigameBot bot) {
         super(command, description, bot);
     }

@@ -1,21 +1,25 @@
 package sigamebot.bot.settings;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import sigamebot.bot.commands.MenuCommand;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
-import sigamebot.utilities.properties.CommandNames;
 
 import java.util.List;
+import java.util.Map;
 
 public class Settings {
 
-    private static final List<List<InlineKeyboardButton>> settingsOptions
-            = List.of(List.of(ITelegramBot.createInlineKeyboardButton("Время на ответ", "response_time")),
-                    List.of(ITelegramBot.createInlineKeyboardButton("Назад",
-                            CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME)));
+    public static final Map<String, ISettingsOption> optionNameToOptionHandler =
+            Map.of(SettingsOptionsCallbackSuffix.ANSWER_TIME_CALLBACK_SUFFIX, new AnswerTimerSettingsOption());
 
-    public static void sendSettingsOptions(TelegramGameDisplay display) {
+    private static final List<List<InlineKeyboardButton>> settingsOptions
+            = List.of(List.of(ITelegramBot.createInlineKeyboardButton("Время на ответ",
+                    CallbackPrefix.SETTINGS + " " + SettingsOptionsCallbackSuffix.ANSWER_TIME_CALLBACK_SUFFIX)),
+            MenuCommand.BACK_BUTTON);
+
+    public static void displaySettingsOptions(TelegramGameDisplay display) {
         display.updateMenuMessage("Настройки", settingsOptions);
     }
 }

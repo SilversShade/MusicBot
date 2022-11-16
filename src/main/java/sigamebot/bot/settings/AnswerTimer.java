@@ -1,6 +1,10 @@
 package sigamebot.bot.settings;
 
+import sigamebot.bot.commands.MenuCommand;
 import sigamebot.logic.SoloGame;
+import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+
+import java.util.List;
 
 public class AnswerTimer implements Runnable {
 
