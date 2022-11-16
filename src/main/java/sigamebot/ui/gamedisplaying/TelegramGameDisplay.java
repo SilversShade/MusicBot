@@ -3,6 +3,7 @@ package sigamebot.ui.gamedisplaying;
 import sigamebot.bot.botstate.classes.FileRequestState;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.logic.Player;
+import sigamebot.logic.SoloGame;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -10,6 +11,8 @@ import sigamebot.utilities.properties.CommandNames;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
@@ -42,11 +45,15 @@ public class TelegramGameDisplay implements IGameDisplay{
                 + "\n\n"
                 + currentQuestion.questionDescription
                 + "\n\n"
+                + "Время на ответ: "
+                + "\n\n"
                 + "Текущее количество очков игрока: "
                 + player.score,
                 chatId,
                 messageId,
                 answerOptionsButtons);
+
+
     }
     @Override
     public void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons){
