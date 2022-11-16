@@ -12,11 +12,11 @@ import java.util.Map;
 public class Settings {
 
     public static final Map<String, ISettingsOption> optionNameToOptionHandler =
-            Map.of(SettingsOptionsCallbackSuffix.ANSWER_TIME_CALLBACK_SUFFIX, new AnswerTimerSettingsOption());
+            Map.of(SettingsOptionsCallbackSuffixes.ANSWER_TIME_CALLBACK_SUFFIX, new AnswerTimerSettingsOption());
 
     private static final List<List<InlineKeyboardButton>> settingsOptions
             = List.of(List.of(ITelegramBot.createInlineKeyboardButton("Время на ответ",
-                    CallbackPrefix.SETTINGS + " " + SettingsOptionsCallbackSuffix.ANSWER_TIME_CALLBACK_SUFFIX)),
+                    CallbackPrefix.SETTINGS + " " + SettingsOptionsCallbackSuffixes.ANSWER_TIME_CALLBACK_SUFFIX)),
             MenuCommand.BACK_BUTTON);
 
     public static void displaySettingsOptions(TelegramGameDisplay display) {

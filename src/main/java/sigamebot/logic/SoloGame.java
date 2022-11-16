@@ -80,7 +80,7 @@ public class SoloGame {
         if (currentQuestion == 0) {
             this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
             currentQuestion++;
-            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.timeForAnswerInSeconds, TimeUnit.SECONDS);
+            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
             return;
         }
 
@@ -100,6 +100,6 @@ public class SoloGame {
 
         this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
         currentQuestion++;
-        timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.timeForAnswerInSeconds, TimeUnit.SECONDS);
+        timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
     }
 }

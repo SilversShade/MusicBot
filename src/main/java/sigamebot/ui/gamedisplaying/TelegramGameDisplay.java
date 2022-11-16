@@ -46,7 +46,7 @@ public class TelegramGameDisplay implements IGameDisplay{
                 + "\n\n"
                 + currentQuestion.questionDescription
                 + "\n\n"
-                + "Время на ответ: " + AnswerTimer.timeForAnswerInSeconds + " секунд."
+                + "Время на ответ: " + AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) + " секунд."
                 + "\n\n"
                 + "Текущее количество очков игрока: "
                 + player.score,
