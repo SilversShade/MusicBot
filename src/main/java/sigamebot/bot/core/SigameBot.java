@@ -10,10 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import sigamebot.bot.commands.*;
-import sigamebot.bot.handlecallback.ICallbackQueryHandler;
-import sigamebot.bot.handlecallback.MenuCallbackQueryHandler;
-import sigamebot.bot.handlecallback.SoloGameCallbackQueryHandler;
-import sigamebot.bot.handlecallback.SoloMenuCallbackQueryHandler;
+import sigamebot.bot.handlecallback.*;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
@@ -41,16 +38,16 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
                 CommandNames.MENU_COMMAND_NAME,
                 new MenuCommand(CommandNames.MENU_COMMAND_NAME, "Меню игры", this),
                 CommandNames.CANCEL_COMMAND_NAME,
-                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Выход из режима ожидания отправки пака", this),
-                CommandNames.ONLINE_MENU_COMMAND_NAME,
-                new OnlineMenuCommand(CommandNames.ONLINE_MENU_COMMAND_NAME, "Онлайн игра", this));
+                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Выход из режима ожидания отправки пака", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),
                 CallbackPrefix.SOLO_GAME,
                 new SoloGameCallbackQueryHandler(),
                 CallbackPrefix.SOLO_MENU,
-                new SoloMenuCallbackQueryHandler(this));
+                new SoloMenuCallbackQueryHandler(this),
+                CallbackPrefix.SETTINGS,
+                new SettingsCallbackQueryHandler(this));
 
         displays = new HashMap<>();
     }

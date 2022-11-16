@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.bot.settings.Settings;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -42,6 +43,10 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             }
             case "base" -> sendPacks(splitData, chatId, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");
+            case "settings" -> {
+                Settings.sendSettingsOptions(display);
+
+            }
             default -> {
                 String path = FilePaths.RESOURCES_DIRECTORY + splitData[1];
                 SoloGame.startNewSoloGame(chatId, Integer.parseInt(splitData[2]),

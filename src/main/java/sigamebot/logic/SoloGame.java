@@ -1,12 +1,17 @@
 package sigamebot.logic;
 
-import sigamebot.ui.gamedisplaying.IGameDisplay;
+import sigamebot.bot.settings.AnswerTimer;
 import sigamebot.logic.scenariologic.Category;
+import sigamebot.ui.gamedisplaying.IGameDisplay;
 import sigamebot.utilities.JsonParser;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class SoloGame {
     private final Category scenario;
@@ -14,12 +19,20 @@ public class SoloGame {
     private final long chatId;
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
+
+    private final AnswerTimer answerTimer;
+    private final ScheduledExecutorService timer;
+    private ScheduledFuture<?> timerSchedulingResult;
+
     private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
-    public SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay){
-        player = new Player("player");
+
+    private SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay) {
+        this.player = new Player("player");
         this.chatId = chatId;
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
+        this.answerTimer = new AnswerTimer(chatId);
+        this.timer = Executors.newScheduledThreadPool(1);
         this.currentQuestion = 0;
     }
 
@@ -54,12 +67,12 @@ public class SoloGame {
         SoloGame.getOngoingSoloGames().get(chatId).start();
     }
 
-    public void start(){
+    public void start() {
         //TODO: validate chosen game
         this.gameDisplay.displayStartMessage();
     }
 
-    public void finish(long chatId){
+    public void finish(long chatId) {
         ongoingSoloGames.remove(chatId);
     }
 
@@ -67,11 +80,15 @@ public class SoloGame {
         if (currentQuestion == 0) {
             this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
             currentQuestion++;
+            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.timeForAnswerInSeconds, TimeUnit.SECONDS);
             return;
         }
 
-        var previousQuestion = this.scenario.questions.get(currentQuestion-1);
-        if (playerResponse.equals(previousQuestion.correctAnswer))
+        if (!timerSchedulingResult.isCancelled())
+            timerSchedulingResult.cancel(false);
+
+        var previousQuestion = this.scenario.questions.get(currentQuestion - 1);
+        if (playerResponse != null && playerResponse.equals(previousQuestion.correctAnswer))
             this.player.score += previousQuestion.cost;
         else this.player.score -= previousQuestion.cost;
 
@@ -83,5 +100,6 @@ public class SoloGame {
 
         this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
         currentQuestion++;
+        timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.timeForAnswerInSeconds, TimeUnit.SECONDS);
     }
 }
