@@ -13,9 +13,9 @@ public class AnswerTimer implements Runnable {
     public static final Map<Long, Integer> chatIdToAnswerTimeInSeconds = new HashMap<>();
     private final long chatId;
 
-    public AnswerTimer(long chatId) {
+    public AnswerTimer(long chatId, int answerTime) {
         this.chatId = chatId;
-        chatIdToAnswerTimeInSeconds.put(chatId, 5);
+        chatIdToAnswerTimeInSeconds.put(chatId, answerTime);
     }
 
     @Override

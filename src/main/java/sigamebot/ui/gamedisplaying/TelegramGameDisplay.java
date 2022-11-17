@@ -19,6 +19,7 @@ public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
     private int messageId;
+    private int answerTime = 5;
     public FileRequestState stageFileRequest = new FileRequestState();
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
@@ -69,5 +70,9 @@ public class TelegramGameDisplay implements IGameDisplay{
                 chatId,
                 messageId,
                 buttons);
+    }
+
+    public int getAnswerTime() {
+        return answerTime;
     }
 }

@@ -131,7 +131,6 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
             execute(message);
             return true;
         } catch (TelegramApiException e) {
-            e.printStackTrace();
             return false;
         }
 

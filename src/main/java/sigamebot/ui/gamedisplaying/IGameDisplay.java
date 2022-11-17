@@ -13,4 +13,5 @@ public interface IGameDisplay {
     void updateGameStateView(Question currentQuestion, Player player);
     void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons);
     void displayEndMessage(Player player);
+    int getAnswerTime();
 }
