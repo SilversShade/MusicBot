@@ -17,9 +17,9 @@ public class UpdateProcessor {
         var chatId = update.getCallbackQuery().getMessage().getChatId();
 
         var callbackPrefix = callData.split(" ")[0];
-        if (queryHandlerMap.containsKey(callbackPrefix)) {
+        if (queryHandlerMap.containsKey(callbackPrefix))
             queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatId);
-        }
+
     }
 
     public static void handleUserFile(IFileHandler handler) {

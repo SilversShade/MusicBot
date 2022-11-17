@@ -51,7 +51,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
                 CallbackPrefix.SOLO_MENU,
                 new SoloMenuCallbackQueryHandler(this),
                 CallbackPrefix.SETTINGS,
-                new SettingsCallbackQueryHandler(this));
+                new SettingsCallbackQueryHandler());
 
         displays = new HashMap<>();
     }

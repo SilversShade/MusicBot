@@ -29,9 +29,11 @@ public class NewUserPackHandler {
         SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
     }
 
-    public static int getNumberOfPacksInDirectory(String directoryPath) {
+    public static int getNumberOfFilesInDirectory(String directoryPath) throws IOException{
         var packsInDirectory = new File(directoryPath).list();
-        return packsInDirectory == null ? 0 : packsInDirectory.length;
+        if (packsInDirectory == null)
+            throw new IOException("No such directory");
+        return packsInDirectory.length;
     }
 
     private static void downloadUserPack(SigameBot bot, Document pack, long chatId, int numberOfPacksInDirectory) {
@@ -59,14 +61,20 @@ public class NewUserPackHandler {
                 return;
             }
 
-            var numberOfPacksInDirectory = getNumberOfPacksInDirectory(FilePaths.USERPACKS_DIRECTORY);
+            int numberOfPacksInDirectory;
+            try {
+                numberOfPacksInDirectory = getNumberOfFilesInDirectory(FilePaths.USERPACKS_DIRECTORY);
+            } catch (IOException e) {
+                bot.sendMessage("Не найдена директория с пользовательскими паками.", chatId);
+                return;
+            }
 
             downloadUserPack(bot, pack, chatId, numberOfPacksInDirectory);
 
             Category parsedPack;
             try {
                 parsedPack = JsonParser.getGameFromJson(numberOfPacksInDirectory, FilePaths.USERPACKS_DIRECTORY);
-            } catch (IOException e) {
+            } catch (IOException | IndexOutOfBoundsException e) {
                 bot.sendMessage("Не удалось получить игру из json.", chatId);
                 return;
             }

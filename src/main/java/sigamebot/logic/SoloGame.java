@@ -47,7 +47,7 @@ public class SoloGame {
         Category parsedGame;
         try {
             parsedGame = JsonParser.getGameFromJson(packNumberInDirectory, pathToPackFolder);
-        } catch (IOException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             e.printStackTrace();
             return;
         }

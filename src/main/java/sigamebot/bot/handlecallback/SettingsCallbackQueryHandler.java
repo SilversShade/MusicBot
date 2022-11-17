@@ -5,11 +5,6 @@ import sigamebot.bot.settings.Settings;
 
 public class SettingsCallbackQueryHandler implements ICallbackQueryHandler {
 
-    private final ITelegramBot bot;
-    public SettingsCallbackQueryHandler(ITelegramBot bot) {
-        this.bot = bot;
-    }
-
     @Override
     public void handleCallbackQuery(String callData, Integer messageId, Long chatId) {
         var parsedData = callData.split(" ");
