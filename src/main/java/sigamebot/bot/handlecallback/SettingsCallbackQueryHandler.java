@@ -15,6 +15,6 @@ public class SettingsCallbackQueryHandler implements ICallbackQueryHandler {
         var parsedData = callData.split(" ");
         if (!Settings.optionNameToOptionHandler.containsKey(parsedData[1]))
             return;
-        Settings.optionNameToOptionHandler.get(parsedData[1]).handle(chatId);
+        Settings.optionNameToOptionHandler.get(parsedData[1]).handleSettingsOption(chatId);
     }
 }

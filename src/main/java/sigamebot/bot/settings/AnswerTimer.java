@@ -1,21 +1,20 @@
 package sigamebot.bot.settings;
 
-import sigamebot.bot.commands.MenuCommand;
 import sigamebot.logic.SoloGame;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AnswerTimer implements Runnable {
 
+    private static final int DEFAULT_ANSWER_TIME_IN_SECONDS = 10;
     public static final Map<Long, Integer> chatIdToAnswerTimeInSeconds = new HashMap<>();
     private final long chatId;
 
-    public AnswerTimer(long chatId, int answerTime) {
+    public AnswerTimer(long chatId) {
         this.chatId = chatId;
-        chatIdToAnswerTimeInSeconds.put(chatId, answerTime);
+        if (!chatIdToAnswerTimeInSeconds.containsKey(chatId))
+            chatIdToAnswerTimeInSeconds.put(chatId, DEFAULT_ANSWER_TIME_IN_SECONDS);
     }
 
     @Override

@@ -2,6 +2,7 @@ package sigamebot.bot.handlecallback;
 
 import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.commands.MenuCommand;
 import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
@@ -43,7 +44,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
-                SigameBot.displays.get(chatId).stageFileRequest.next();
+                SigameBot.displays.get(chatId).currentBotState.next(BotStates.PACK_REQUESTED);
             }
             case "base" -> sendPacks(splitData, chatId, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");

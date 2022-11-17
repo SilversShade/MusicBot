@@ -9,10 +9,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import sigamebot.bot.botstate.BotStates;
+import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.commands.*;
 import sigamebot.bot.handlecallback.*;
+import sigamebot.bot.settings.Settings;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
+import sigamebot.exceptions.IncorrectSettingsParameterException;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
@@ -38,7 +42,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
                 CommandNames.MENU_COMMAND_NAME,
                 new MenuCommand(CommandNames.MENU_COMMAND_NAME, "Меню игры", this),
                 CommandNames.CANCEL_COMMAND_NAME,
-                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Выход из режима ожидания отправки пака", this));
+                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Отмена текущего действия, возврат в главное меню", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),
@@ -63,6 +67,19 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
 
         if (message == null)
             return;
+
+
+        if (displays.containsKey(message.getChatId())
+                && displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
+                && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption)) {
+            try {
+                Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption).processUserResponse(message);
+            } catch (IncorrectSettingsParameterException e) {
+                sendMessage(e.getMessage(), message.getChatId());
+            }
+            deleteMessage(message.getChatId(), message.getMessageId());
+            return;
+        }
 
         if (!displays.containsKey(message.getChatId())) {
             var messageId = sendMessage("Start message", message.getChatId());

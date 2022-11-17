@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import sigamebot.bot.botstate.SigameBotFileRequestStage;
+import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
@@ -26,7 +26,7 @@ public class NewUserPackHandler {
 
     private static void respondToWrongExtension(SigameBot bot, long chatId) {
         bot.sendMessage("Пак должен быть в формате json", chatId);
-        SigameBot.displays.get(chatId).stageFileRequest.next();
+        SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
     }
 
     public static int getNumberOfPacksInDirectory(String directoryPath) {
@@ -50,7 +50,7 @@ public class NewUserPackHandler {
         UpdateProcessor.handleUserFile(() -> {
             var chatId = message.getChatId();
 
-            if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.PACK_REQUESTED)
+            if (SigameBot.displays.get(chatId).currentBotState.getState() != BotStates.PACK_REQUESTED)
                 return;
 
             var pack = message.getDocument();
@@ -81,7 +81,7 @@ public class NewUserPackHandler {
             }
             bot.deleteMessage(chatId, message.getMessageId());
             SoloGame.startNewSoloGame(chatId, parsedPack, SigameBot.displays.get(chatId));
-            SigameBot.displays.get(chatId).stageFileRequest.next();
+            SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
         });
     }
 }

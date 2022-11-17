@@ -11,8 +11,13 @@ import java.util.Map;
 
 public class Settings {
 
+    private static final AnswerTimerSettingsOption answerTimerSettingsOption = new AnswerTimerSettingsOption();
+
+    public static final Map<SettingsOptions, ISettingsOption> userResponseDelegator = Map.of(
+            SettingsOptions.ANSWER_TIMER, answerTimerSettingsOption);
+
     public static final Map<String, ISettingsOption> optionNameToOptionHandler =
-            Map.of(SettingsOptionsCallbackSuffixes.ANSWER_TIME_CALLBACK_SUFFIX, new AnswerTimerSettingsOption());
+            Map.of(SettingsOptionsCallbackSuffixes.ANSWER_TIME_CALLBACK_SUFFIX, answerTimerSettingsOption);
 
     private static final List<List<InlineKeyboardButton>> settingsOptions
             = List.of(List.of(ITelegramBot.createInlineKeyboardButton("Время на ответ",

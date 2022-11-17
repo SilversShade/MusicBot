@@ -31,7 +31,7 @@ public class SoloGame {
         this.chatId = chatId;
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
-        this.answerTimer = new AnswerTimer(chatId, this.gameDisplay.getAnswerTime());
+        this.answerTimer = new AnswerTimer(chatId);
         this.timer = Executors.newScheduledThreadPool(1);
         this.currentQuestion = 0;
     }

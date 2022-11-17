@@ -1,7 +1,9 @@
 package sigamebot.bot.settings;
 
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 public interface ISettingsOption {
-    void handle(long chatId);
+    void handleSettingsOption(long chatId);
+
+    void processUserResponse(Message userMessage);
 }
