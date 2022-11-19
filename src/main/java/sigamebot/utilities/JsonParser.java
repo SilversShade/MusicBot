@@ -11,7 +11,7 @@ public class JsonParser {
 
     private static final Gson GSON = new Gson();
 
-    public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder) throws IOException{
+    public static Category getGameFromJson(int gameNumberInFolder, String pathToFolder) throws IOException, IndexOutOfBoundsException{
         var tests = FileParser.getAllFilesFromDir(pathToFolder);
         return GSON.fromJson(readFromInputStream(tests.get(gameNumberInFolder).getPath()), Category.class);
     }

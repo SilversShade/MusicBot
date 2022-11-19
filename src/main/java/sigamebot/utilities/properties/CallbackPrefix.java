@@ -8,7 +8,6 @@ public class CallbackPrefix {
     public static final String START = resourceBundle.getString("start");
     public static final String MENU = resourceBundle.getString("menu");
     public static final String SOLO_GAME = resourceBundle.getString("solo_game");
-    public static final String ONLINE_GAME = resourceBundle.getString("online_game");
     public static final String SOLO_MENU = resourceBundle.getString("solo_menu");
-    public static final String ONLINE_MENU = resourceBundle.getString("online_menu");
+    public static final String SETTINGS = resourceBundle.getString("settings");
 }

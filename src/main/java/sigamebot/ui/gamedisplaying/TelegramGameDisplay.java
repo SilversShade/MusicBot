@@ -1,7 +1,8 @@
 package sigamebot.ui.gamedisplaying;
 
-import sigamebot.bot.botstate.classes.FileRequestState;
+import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.ITelegramBot;
+import sigamebot.bot.settings.AnswerTimer;
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -15,7 +16,7 @@ public class TelegramGameDisplay implements IGameDisplay{
     private final ITelegramBot bot;
     private final long chatId;
     private int messageId;
-    public FileRequestState stageFileRequest = new FileRequestState();
+    public SigameBotState currentBotState = new SigameBotState();
     public TelegramGameDisplay(ITelegramBot bot, long chatId, int messageId) {
         this.bot = bot;
         this.chatId = chatId;
@@ -42,6 +43,8 @@ public class TelegramGameDisplay implements IGameDisplay{
                 + "\n\n"
                 + currentQuestion.questionDescription
                 + "\n\n"
+                + "Время на ответ: " + AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) + " секунд."
+                + "\n\n"
                 + "Текущее количество очков игрока: "
                 + player.score,
                 chatId,
@@ -53,6 +56,13 @@ public class TelegramGameDisplay implements IGameDisplay{
         if(!this.bot.editMessage(text, chatId, messageId, buttons))
             messageId = this.bot.sendMessage(text, chatId, buttons);
     }
+
+    @Override
+    public void updateMenuMessage(String text) {
+        if(!this.bot.editMessage(text, chatId, messageId))
+            messageId = this.bot.sendMessage(text, chatId);
+    }
+
     @Override
     public void displayEndMessage(Player player) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();

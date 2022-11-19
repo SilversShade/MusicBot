@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import sigamebot.bot.botstate.SigameBotFileRequestStage;
+import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.logic.SoloGame;
@@ -26,12 +26,14 @@ public class NewUserPackHandler {
 
     private static void respondToWrongExtension(SigameBot bot, long chatId) {
         bot.sendMessage("Пак должен быть в формате json", chatId);
-        SigameBot.displays.get(chatId).stageFileRequest.next();
+        SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
     }
 
-    public static int getNumberOfPacksInDirectory(String directoryPath) {
+    public static int getNumberOfFilesInDirectory(String directoryPath) throws IOException{
         var packsInDirectory = new File(directoryPath).list();
-        return packsInDirectory == null ? 0 : packsInDirectory.length;
+        if (packsInDirectory == null)
+            throw new IOException("No such directory");
+        return packsInDirectory.length;
     }
 
     private static void downloadUserPack(SigameBot bot, Document pack, long chatId, int numberOfPacksInDirectory) {
@@ -46,11 +48,18 @@ public class NewUserPackHandler {
         }
     }
 
+    /**
+     *
+     * @param bot
+     * @param message
+     */
+
+    @Deprecated
     public static void handleNewUserPack(SigameBot bot, Message message) {
         UpdateProcessor.handleUserFile(() -> {
             var chatId = message.getChatId();
 
-            if (SigameBot.displays.get(chatId).stageFileRequest.getState() != SigameBotFileRequestStage.PACK_REQUESTED)
+            if (SigameBot.displays.get(chatId).currentBotState.getState() != BotStates.PACK_REQUESTED)
                 return;
 
             var pack = message.getDocument();
@@ -59,14 +68,20 @@ public class NewUserPackHandler {
                 return;
             }
 
-            var numberOfPacksInDirectory = getNumberOfPacksInDirectory(FilePaths.USERPACKS_DIRECTORY);
+            int numberOfPacksInDirectory;
+            try {
+                numberOfPacksInDirectory = getNumberOfFilesInDirectory(FilePaths.USERPACKS_DIRECTORY);
+            } catch (IOException e) {
+                bot.sendMessage("Не найдена директория с пользовательскими паками.", chatId);
+                return;
+            }
 
             downloadUserPack(bot, pack, chatId, numberOfPacksInDirectory);
 
             Category parsedPack;
             try {
                 parsedPack = JsonParser.getGameFromJson(numberOfPacksInDirectory, FilePaths.USERPACKS_DIRECTORY);
-            } catch (IOException e) {
+            } catch (IOException | IndexOutOfBoundsException e) {
                 bot.sendMessage("Не удалось получить игру из json.", chatId);
                 return;
             }
@@ -81,7 +96,7 @@ public class NewUserPackHandler {
             }
             bot.deleteMessage(chatId, message.getMessageId());
             SoloGame.startNewSoloGame(chatId, parsedPack, SigameBot.displays.get(chatId));
-            SigameBot.displays.get(chatId).stageFileRequest.next();
+            SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
         });
     }
 }
