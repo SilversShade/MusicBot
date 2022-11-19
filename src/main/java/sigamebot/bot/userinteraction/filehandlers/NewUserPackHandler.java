@@ -48,6 +48,13 @@ public class NewUserPackHandler {
         }
     }
 
+    /**
+     *
+     * @param bot
+     * @param message
+     */
+
+    @Deprecated
     public static void handleNewUserPack(SigameBot bot, Message message) {
         UpdateProcessor.handleUserFile(() -> {
             var chatId = message.getChatId();

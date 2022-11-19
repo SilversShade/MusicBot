@@ -8,6 +8,7 @@ import java.util.Map;
 public class AnswerTimer implements Runnable {
 
     private static final int DEFAULT_ANSWER_TIME_IN_SECONDS = 10;
+    //Todo
     public static final Map<Long, Integer> chatIdToAnswerTimeInSeconds = new HashMap<>();
     private final long chatId;
 

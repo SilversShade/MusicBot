@@ -12,6 +12,4 @@ public class SoloGameTest {
         Assertions.assertDoesNotThrow(() -> SoloGame.startNewSoloGame(123,
                 2, "does/not/exist", new TelegramGameDisplay(new SigameBot(), 12, 12)));
     }
-
-
 }

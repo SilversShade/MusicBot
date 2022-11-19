@@ -90,7 +90,8 @@ public class SoloGame {
         var previousQuestion = this.scenario.questions.get(currentQuestion - 1);
         if (playerResponse != null && playerResponse.equals(previousQuestion.correctAnswer))
             this.player.score += previousQuestion.cost;
-        else this.player.score -= previousQuestion.cost;
+        else
+            this.player.score -= previousQuestion.cost;
 
         if (currentQuestion == this.scenario.questions.size()) {
             this.gameDisplay.displayEndMessage(player);

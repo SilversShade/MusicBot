@@ -32,6 +32,8 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
     private static final String NAME = "SIGame Bot";
     public static Map<String, SigameBotCommand> commandMap;
     private static Map<String, ICallbackQueryHandler> queryHandlerMap;
+
+    //todo:
     public static Map<Long, TelegramGameDisplay> displays;
 
     public SigameBot() {
@@ -56,22 +58,18 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
         displays = new HashMap<>();
     }
 
+    @Deprecated
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = null;
-        if (update.hasMessage())
-            message = update.getMessage();
-
+        // TODO: decompose
         if (update.hasCallbackQuery())
             UpdateProcessor.processCallbackQuery(update, queryHandlerMap);
 
-        if (message == null)
+        if (!update.hasMessage())
             return;
+        Message message = update.getMessage();
 
-
-        if (displays.containsKey(message.getChatId())
-                && displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
-                && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption)) {
+        if (isBotWaitingAnswer(message)) {
             try {
                 Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption).processUserResponse(message);
             } catch (IncorrectSettingsParameterException e) {
@@ -93,6 +91,13 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
 
         if (message.hasDocument())
             UserFileHandler.handleUserFiles(this, message);
+    }
+
+    private boolean isBotWaitingAnswer(Message message)
+    {
+        return displays.containsKey(message.getChatId())
+                && displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
+                && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption);
     }
 
     @Override

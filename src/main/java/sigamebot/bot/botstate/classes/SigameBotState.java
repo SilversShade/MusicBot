@@ -12,6 +12,6 @@ public class SigameBotState {
         return state;
     }
     public void next(IState nextState){
-        state = state.switchToNextState(nextState);
+        state = nextState;
     }
 }
