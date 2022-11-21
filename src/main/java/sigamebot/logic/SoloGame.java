@@ -68,7 +68,6 @@ public class SoloGame {
     }
 
     public void start() {
-        //TODO: validate chosen game
         this.gameDisplay.displayStartMessage();
     }
 
@@ -80,11 +79,12 @@ public class SoloGame {
         if (currentQuestion == 0) {
             this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
             currentQuestion++;
-            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
+            if (AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) != 0)
+                timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
             return;
         }
 
-        if (!timerSchedulingResult.isCancelled())
+        if (timerSchedulingResult != null && !timerSchedulingResult.isCancelled())
             timerSchedulingResult.cancel(false);
 
         var previousQuestion = this.scenario.questions.get(currentQuestion - 1);
@@ -101,6 +101,7 @@ public class SoloGame {
 
         this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
         currentQuestion++;
-        timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
+        if (AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) != 0)
+            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
     }
 }

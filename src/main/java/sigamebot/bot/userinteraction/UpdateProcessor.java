@@ -4,7 +4,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import sigamebot.bot.commands.SigameBotCommand;
 import sigamebot.bot.handlecallback.ICallbackQueryHandler;
-import sigamebot.bot.userinteraction.filehandlers.IFileHandler;
 
 import java.util.Map;
 
@@ -20,10 +19,6 @@ public class UpdateProcessor {
         if (queryHandlerMap.containsKey(callbackPrefix))
             queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatId);
 
-    }
-
-    public static void handleUserFile(IFileHandler handler) {
-        handler.handleFile();
     }
 
     public static void processCommands(Message message, Map<String, SigameBotCommand> commandMap){

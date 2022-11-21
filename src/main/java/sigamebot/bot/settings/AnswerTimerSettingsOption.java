@@ -10,7 +10,8 @@ import sigamebot.utilities.properties.CommandNames;
 public class AnswerTimerSettingsOption implements ISettingsOption {
     @Override
     public void handleSettingsOption(long chatId) {
-        SigameBot.displays.get(chatId).updateMenuMessage("Введите время, отведенное на ответ (в секундах).");
+        SigameBot.displays.get(chatId).updateMenuMessage("Введите время, отведенное на ответ (в секундах)." +
+                " Введите 0 для отключения ограничения времени на ответ.");
         SigameBot.displays.get(chatId).currentBotState.next(BotStates.SETTING_UP);
         SigameBotState.currentSettingsOption = SettingsOptions.ANSWER_TIMER;
     }
@@ -25,10 +26,14 @@ public class AnswerTimerSettingsOption implements ISettingsOption {
         }
         int timeInSeconds;
         try {
-            timeInSeconds = Integer.parseInt(userMessage.getText());
+            timeInSeconds = Math.toIntExact(Long.parseLong(userMessage.getText()));
         } catch (NumberFormatException e) {
-            throw new IncorrectSettingsParameterException("Необходимо ввести неотрицательное целое число.");
+            throw new IncorrectSettingsParameterException("Необходимо ввести неотрицательное целое число, не превосходящее " + Integer.MAX_VALUE);
         }
+        catch (ArithmeticException e) {
+            throw new IncorrectSettingsParameterException("Введенное число слишком большое.");
+        }
+
         if (timeInSeconds < 0)
             throw new IncorrectSettingsParameterException("Число должно быть неотрицательным");
 

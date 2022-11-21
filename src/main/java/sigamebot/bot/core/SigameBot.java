@@ -17,6 +17,7 @@ import sigamebot.bot.settings.Settings;
 import sigamebot.bot.userinteraction.UpdateProcessor;
 import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
 import sigamebot.exceptions.IncorrectSettingsParameterException;
+import sigamebot.exceptions.UserPackHandlerException;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
@@ -69,7 +70,7 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
             return;
         Message message = update.getMessage();
 
-        if (isBotWaitingAnswer(message)) {
+        if (isBotAwaitingAnswer(message)) {
             try {
                 Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption).processUserResponse(message);
             } catch (IncorrectSettingsParameterException e) {
@@ -89,12 +90,17 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
             deleteMessage(message.getChatId(), message.getMessageId());
         }
 
-        if (message.hasDocument())
-            UserFileHandler.handleUserFiles(this, message);
+        if (message.hasDocument()) {
+            try {
+                UserFileHandler.handleUserFiles(this, message);
+                this.deleteMessage(message.getChatId(), message.getMessageId());
+            } catch (UserPackHandlerException e) {
+                this.sendMessage(e.getMessage(), message.getChatId());
+            }
+        }
     }
 
-    private boolean isBotWaitingAnswer(Message message)
-    {
+    private boolean isBotAwaitingAnswer(Message message) {
         return displays.containsKey(message.getChatId())
                 && displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
                 && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption);
