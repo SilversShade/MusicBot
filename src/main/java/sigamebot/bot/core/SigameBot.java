@@ -1,23 +1,15 @@
 package sigamebot.bot.core;
 
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import sigamebot.bot.botstate.BotStates;
-import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.commands.*;
 import sigamebot.bot.handlecallback.*;
-import sigamebot.bot.settings.Settings;
 import sigamebot.bot.userinteraction.UpdateProcessor;
-import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
-import sigamebot.exceptions.IncorrectSettingsParameterException;
-import sigamebot.exceptions.UserPackHandlerException;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
@@ -28,11 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
+public class SigameBot extends TelegramBotMessageApi {
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
+
+    private final UpdateProcessor updateProcessor;
     public static Map<String, SigameBotCommand> commandMap;
-    private static Map<String, ICallbackQueryHandler> queryHandlerMap;
+    public static Map<String, ICallbackQueryHandler> queryHandlerMap;
 
     //todo:
     public static Map<Long, TelegramGameDisplay> displays;
@@ -57,53 +51,12 @@ public class SigameBot extends TelegramLongPollingBot implements ITelegramBot {
                 new SettingsCallbackQueryHandler());
 
         displays = new HashMap<>();
+        updateProcessor = new UpdateProcessor(this);
     }
 
-    @Deprecated
     @Override
     public void onUpdateReceived(Update update) {
-        // TODO: decompose
-        if (update.hasCallbackQuery())
-            UpdateProcessor.processCallbackQuery(update, queryHandlerMap);
-
-        if (!update.hasMessage())
-            return;
-        Message message = update.getMessage();
-
-        if (isBotAwaitingAnswer(message)) {
-            try {
-                Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption).processUserResponse(message);
-            } catch (IncorrectSettingsParameterException e) {
-                sendMessage(e.getMessage(), message.getChatId());
-            }
-            deleteMessage(message.getChatId(), message.getMessageId());
-            return;
-        }
-
-        if (!displays.containsKey(message.getChatId())) {
-            var messageId = sendMessage("Start message", message.getChatId());
-            displays.put(message.getChatId(),
-                    new TelegramGameDisplay(this, message.getChatId(), messageId));
-        }
-        if (message.getText() != null && commandMap.containsKey(message.getText())) {
-            UpdateProcessor.processCommands(message, commandMap);
-            deleteMessage(message.getChatId(), message.getMessageId());
-        }
-
-        if (message.hasDocument()) {
-            try {
-                UserFileHandler.handleUserFiles(this, message);
-                this.deleteMessage(message.getChatId(), message.getMessageId());
-            } catch (UserPackHandlerException e) {
-                this.sendMessage(e.getMessage(), message.getChatId());
-            }
-        }
-    }
-
-    private boolean isBotAwaitingAnswer(Message message) {
-        return displays.containsKey(message.getChatId())
-                && displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
-                && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption);
+        this.updateProcessor.handleReceivedUpdates(update);
     }
 
     @Override

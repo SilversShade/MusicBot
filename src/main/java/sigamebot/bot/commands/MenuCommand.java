@@ -1,8 +1,8 @@
 package sigamebot.bot.commands;
 
 import sigamebot.bot.botstate.BotStates;
-import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.utilities.properties.CommandNames;
 import sigamebot.utilities.properties.FilePaths;
 import sigamebot.utilities.StreamReader;
@@ -17,12 +17,13 @@ import java.util.List;
 @Singleton
 public class MenuCommand extends SigameBotCommand{
 
-    public static final List<InlineKeyboardButton> BACK_BUTTON = List.of(ITelegramBot.createInlineKeyboardButton("Назад",
+    public static final List<InlineKeyboardButton> BACK_BUTTON = List.of(TelegramBotMessageApi.createInlineKeyboardButton("Назад",
             CallbackPrefix.MENU + " " + CommandNames.SOLO_MENU_COMMAND_NAME));
 
     public MenuCommand(String command, String description, SigameBot bot) {
         super(command, description, bot);
     }
+
     @Override
     public void executeCommand(long chatId){
         var display = SigameBot.displays.get(chatId);
@@ -40,7 +41,7 @@ public class MenuCommand extends SigameBotCommand{
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         for (String menuOpinion : menuOpinions) {
             var opinion = menuOpinion.split(":");
-            var button = ITelegramBot.createInlineKeyboardButton(opinion[0],
+            var button = TelegramBotMessageApi.createInlineKeyboardButton(opinion[0],
                     CallbackPrefix.MENU + " " + opinion[1]);
             buttons.add(List.of(button));
         }

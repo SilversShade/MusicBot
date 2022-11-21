@@ -4,8 +4,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.commands.MenuCommand;
-import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.bot.settings.Settings;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
-    private final ITelegramBot bot;
+    private final TelegramBotMessageApi bot;
 
-    public SoloMenuCallbackQueryHandler(ITelegramBot bot) {
+    public SoloMenuCallbackQueryHandler(TelegramBotMessageApi bot) {
         this.bot = bot;
     }
 
@@ -41,7 +41,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                     return;
                 }
                 List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-                buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
+                buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Вернуться в меню",
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
                 SigameBot.displays.get(chatId).currentBotState.next(BotStates.PACK_REQUESTED);
@@ -66,7 +66,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
 
     private void sendErrorMessage(Long chatId, int messageId) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Вернуться в меню",
+        buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Вернуться в меню",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
         bot.editMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".",
                 chatId, messageId, buttons);
@@ -76,10 +76,10 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         List<InlineKeyboardButton> raw = new ArrayList<>();
         int previousPage = pageNumber - 1 < 0 ? maxPageNumber - 1 : pageNumber - 1;
         int nextPage = pageNumber + 1 > maxPageNumber - 1 ? 0 : pageNumber + 1;
-        raw.add(ITelegramBot.createInlineKeyboardButton("<", CallbackPrefix.SOLO_MENU + " base " + previousPage));
-        raw.add(ITelegramBot.createInlineKeyboardButton((pageNumber + 1) + "/" + maxPageNumber,
+        raw.add(TelegramBotMessageApi.createInlineKeyboardButton("<", CallbackPrefix.SOLO_MENU + " base " + previousPage));
+        raw.add(TelegramBotMessageApi.createInlineKeyboardButton((pageNumber + 1) + "/" + maxPageNumber,
                 CallbackPrefix.SOLO_MENU + " base " + pageNumber));
-        raw.add(ITelegramBot.createInlineKeyboardButton(">", CallbackPrefix.SOLO_MENU + " base " + nextPage));
+        raw.add(TelegramBotMessageApi.createInlineKeyboardButton(">", CallbackPrefix.SOLO_MENU + " base " + nextPage));
         return raw;
     }
 
@@ -96,7 +96,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         }
 
         for (var i = 5 * page; i < Math.min(5 * (page + 1), packs.size()); i++) {
-            buttons.add(List.of(ITelegramBot.createInlineKeyboardButton(FilenameUtils.removeExtension(packs.get(i).getName()),
+            buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton(FilenameUtils.removeExtension(packs.get(i).getName()),
                     CallbackPrefix.SOLO_MENU + " " + type + " " + i)));
         }
 

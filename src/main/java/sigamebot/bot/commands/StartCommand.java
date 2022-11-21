@@ -2,8 +2,8 @@ package sigamebot.bot.commands;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.botstate.BotStates;
-import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
 import sigamebot.utilities.properties.FilePaths;
@@ -27,7 +27,7 @@ public class StartCommand extends SigameBotCommand{
             return;
         try {
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(ITelegramBot.createInlineKeyboardButton("Меню",
+            buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Меню",
                     CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
             display.updateMenuMessage(StreamReader.readFromInputStream(
                             FilePaths.START_COMMAND_MESSAGE),buttons);

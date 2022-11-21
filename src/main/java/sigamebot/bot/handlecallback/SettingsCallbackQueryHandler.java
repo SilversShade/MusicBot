@@ -1,6 +1,5 @@
 package sigamebot.bot.handlecallback;
 
-import sigamebot.bot.core.ITelegramBot;
 import sigamebot.bot.settings.Settings;
 
 public class SettingsCallbackQueryHandler implements ICallbackQueryHandler {
