@@ -2,6 +2,7 @@ package sigamebot.bot.commands;
 
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.core.SigameBot;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.properties.CommandNames;
 
 public class CancelCommand extends SigameBotCommand{
@@ -10,8 +11,8 @@ public class CancelCommand extends SigameBotCommand{
     }
 
     @Override
-    public void executeCommand(long chatId) {
-        SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
-        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatId);
+    public void executeCommand(ChatInfo chatInfo) {
+        chatInfo.getGameDisplay().currentBotState.next(BotStates.DEFAULT_STATE);
+        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatInfo);
     }
 }

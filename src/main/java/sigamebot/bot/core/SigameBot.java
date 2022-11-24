@@ -10,12 +10,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import sigamebot.bot.commands.*;
 import sigamebot.bot.handlecallback.*;
 import sigamebot.bot.userinteraction.UpdateProcessor;
-import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
 
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +22,9 @@ public class SigameBot extends TelegramBotMessageApi {
     private static final String TOKEN = System.getenv("botToken");
     private static final String NAME = "SIGame Bot";
 
-    private final UpdateProcessor updateProcessor;
+    private final UpdateProcessor updateProcessor = new UpdateProcessor(this);
     private static Map<String, SigameBotCommand> commandMap;
-    private static Map<String, ICallbackQueryHandler> queryHandlerMap;
-
-    public static Map<Long, TelegramGameDisplay> displays;
+    private final Map<String, ICallbackQueryHandler> queryHandlerMap;
 
     public SigameBot() {
         commandMap = Map.of(CommandNames.START_COMMAND_NAME,
@@ -48,9 +44,6 @@ public class SigameBot extends TelegramBotMessageApi {
                 new SoloMenuCallbackQueryHandler(this),
                 CallbackPrefix.SETTINGS,
                 new SettingsCallbackQueryHandler());
-
-        displays = new HashMap<>();
-        updateProcessor = new UpdateProcessor(this);
     }
 
     public static Map<String, SigameBotCommand> getCommandMap() {
@@ -121,15 +114,14 @@ public class SigameBot extends TelegramBotMessageApi {
     }
 
 
-    public int deleteMessage(long chatId, int messageId) {
+    public void deleteMessage(long chatId, int messageId) {
         DeleteMessage message = new DeleteMessage();
         message.setChatId(chatId);
         message.setMessageId(messageId);
         try {
             execute(message);
-            return 0;
         } catch (TelegramApiException e) {
-            return -1;
+            e.printStackTrace();
         }
 
     }

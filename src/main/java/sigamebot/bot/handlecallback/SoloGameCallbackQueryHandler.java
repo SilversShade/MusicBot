@@ -1,12 +1,12 @@
 package sigamebot.bot.handlecallback;
 
-import sigamebot.logic.SoloGame;
+import sigamebot.user.ChatInfo;
 
 public class SoloGameCallbackQueryHandler implements ICallbackQueryHandler{
 
     @Override
-    public void handleCallbackQuery(String callData, Integer messageId, Long chatId){
+    public void handleCallbackQuery(String callData, Integer messageId, ChatInfo chatInfo){
         var parsedData = callData.split(" ", 2);
-        SoloGame.getOngoingSoloGames().get(chatId).nextQuestion(parsedData[1]);
+        chatInfo.getOngoingSoloGame().nextQuestion(parsedData[1]);
     }
 }

@@ -3,6 +3,7 @@ package sigamebot.bot.handlecallback;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.core.TelegramBotMessageApi;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
 
@@ -17,16 +18,16 @@ public class MenuCallbackQueryHandler implements ICallbackQueryHandler {
     }
 
     @Override
-    public void handleCallbackQuery(String callData, Integer messageId, Long chatId) {
+    public void handleCallbackQuery(String callData, Integer messageId, ChatInfo chatInfo) {
         var splitData = callData.split(" ");
         if (SigameBot.getCommandMap().containsKey(splitData[1]))
-            SigameBot.getCommandMap().get(splitData[1]).executeCommand(chatId);
+            SigameBot.getCommandMap().get(splitData[1]).executeCommand(chatInfo);
         else {
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
             buttons.add(List.of(TelegramBotMessageApi.
                     createInlineKeyboardButton("Меню",
                             CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
-            bot.editMessage("В разработке", chatId, messageId, buttons);
+            bot.editMessage("В разработке", chatInfo.getChatId(), messageId, buttons);
         }
     }
 }

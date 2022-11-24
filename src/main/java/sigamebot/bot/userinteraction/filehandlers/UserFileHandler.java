@@ -3,19 +3,18 @@ package sigamebot.bot.userinteraction.filehandlers;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import sigamebot.bot.botstate.BotStates;
-import sigamebot.bot.core.SigameBot;
 import sigamebot.exceptions.UserPackHandlerException;
 import sigamebot.logic.SoloGame;
+import sigamebot.user.ChatInfo;
 
 public class UserFileHandler {
 
-    public static void handleUserFiles(TelegramLongPollingBot bot, Message message) throws UserPackHandlerException{
-        handleNewUserPack(bot, message);
+    public static void handleUserFiles(TelegramLongPollingBot bot, Message message, ChatInfo chatInfo) throws UserPackHandlerException{
+        handleNewUserPack(bot, message, chatInfo);
     }
 
-    private static void handleNewUserPack(TelegramLongPollingBot bot, Message message) throws UserPackHandlerException {
-        var chatId = message.getChatId();
-        if (SigameBot.displays.get(chatId).currentBotState.getState() != BotStates.PACK_REQUESTED)
+    private static void handleNewUserPack(TelegramLongPollingBot bot, Message message, ChatInfo chatInfo) throws UserPackHandlerException {
+        if (chatInfo.getGameDisplay().currentBotState.getState() != BotStates.PACK_REQUESTED)
             return;
 
         var packFromMessage = NewUserPackHandler.getPackFromMessage(message);
@@ -26,7 +25,7 @@ public class UserFileHandler {
         var deserializedUserPack = NewUserPackHandler.parseUserPack(numberOfPacksInDirectory);
         NewUserPackHandler.giveCorrectNameToUserPack(deserializedUserPack, numberOfPacksInDirectory);
 
-        SoloGame.startNewSoloGame(chatId, deserializedUserPack, SigameBot.displays.get(chatId));
-        SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
+        SoloGame.startNewSoloGame(chatInfo, deserializedUserPack, chatInfo.getGameDisplay());
+        chatInfo.getGameDisplay().currentBotState.next(BotStates.DEFAULT_STATE);
     }
 }

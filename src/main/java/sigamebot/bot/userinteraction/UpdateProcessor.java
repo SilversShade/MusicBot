@@ -12,21 +12,25 @@ import sigamebot.bot.userinteraction.filehandlers.UserFileHandler;
 import sigamebot.exceptions.IncorrectSettingsParameterException;
 import sigamebot.exceptions.UserPackHandlerException;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.user.ChatInfo;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateProcessor {
 
     private final TelegramBotMessageApi bot;
 
+    private final Map<Long, ChatInfo> chatInfoMap = new HashMap<>();
+
     public UpdateProcessor(TelegramBotMessageApi bot) {
         this.bot = bot;
     }
 
     private boolean isBotAwaitingSettingUp(Message message) {
-        return SigameBot.displays.containsKey(message.getChatId())
-                && SigameBot.displays.get(message.getChatId()).currentBotState.getState() == BotStates.SETTING_UP
+        return chatInfoMap.containsKey(message.getChatId())
+                && chatInfoMap.get(message.getChatId()).getGameDisplay().currentBotState.getState() == BotStates.SETTING_UP
                 && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption);
     }
 
@@ -36,7 +40,7 @@ public class UpdateProcessor {
             processCallbackQuery(update, queryHandlerMap);
 
         if (update.hasMessage()) {
-            initializeGameDisplayForChat(update.getMessage());
+            initializeChatInfo(update.getMessage());
             processMessage(update.getMessage());
         }
     }
@@ -44,7 +48,8 @@ public class UpdateProcessor {
     private void processSettingsAdjustment(@NotNull Message message) {
         if (isBotAwaitingSettingUp(message)) {
             try {
-                Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption).processUserResponse(message);
+                Settings.userResponseDelegator.get(SigameBotState.currentSettingsOption)
+                        .processUserResponse(message, chatInfoMap.get(message.getChatId()));
             } catch (IncorrectSettingsParameterException e) {
                 bot.sendMessage(e.getMessage(), message.getChatId());
             }
@@ -52,11 +57,11 @@ public class UpdateProcessor {
         }
     }
 
-    private void initializeGameDisplayForChat(@NotNull Message message) {
-        if (!SigameBot.displays.containsKey(message.getChatId())) {
+    private void initializeChatInfo(@NotNull Message message) {
+        if (!chatInfoMap.containsKey(message.getChatId())) {
             var messageId = bot.sendMessage("Start message", message.getChatId());
-            SigameBot.displays.put(message.getChatId(),
-                    new TelegramGameDisplay(bot, message.getChatId(), messageId));
+            chatInfoMap.put(message.getChatId(),
+                    new ChatInfo(message.getChatId(), new TelegramGameDisplay(bot, message.getChatId(), messageId)));
         }
     }
     private void processMessage(@NotNull Message message) {
@@ -68,7 +73,7 @@ public class UpdateProcessor {
     private void processDocuments(@NotNull Message message) {
         if (message.hasDocument()) {
             try {
-                UserFileHandler.handleUserFiles(bot, message);
+                UserFileHandler.handleUserFiles(bot, message, chatInfoMap.get(message.getChatId()));
                 bot.deleteMessage(message.getChatId(), message.getMessageId());
             } catch (UserPackHandlerException e) {
                 bot.sendMessage(e.getMessage(), message.getChatId());
@@ -84,13 +89,13 @@ public class UpdateProcessor {
 
         var callbackPrefix = callData.split(" ")[0];
         if (queryHandlerMap.containsKey(callbackPrefix))
-            queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatId);
+            queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatInfoMap.get(chatId));
 
     }
 
     private void processCommands(@NotNull Message message){
         if (message.getText() != null && SigameBot.getCommandMap().containsKey(message.getText())) {
-            SigameBot.getCommandMap().get(message.getText()).executeCommand(message.getChatId());
+            SigameBot.getCommandMap().get(message.getText()).executeCommand(chatInfoMap.get(message.getChatId()));
             bot.deleteMessage(message.getChatId(), message.getMessageId());
         }
     }

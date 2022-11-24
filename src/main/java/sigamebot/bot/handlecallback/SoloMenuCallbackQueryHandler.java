@@ -4,11 +4,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.commands.MenuCommand;
-import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.bot.settings.Settings;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.FileParser;
 import sigamebot.utilities.properties.CallbackPrefix;
 import sigamebot.utilities.properties.CommandNames;
@@ -28,15 +28,15 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
     }
 
     @Override
-    public void handleCallbackQuery(String callData, Integer messageId, Long chatId) {
-        var display = SigameBot.displays.get(chatId);
+    public void handleCallbackQuery(String callData, Integer messageId, ChatInfo chatInfo) {
+        var display = chatInfo.getGameDisplay();
         var splitData = callData.split(" ");
         switch (splitData[1]) {
             case "add_game" -> {
                 try {
                     createUserpacksDirectoryIfNotPresent();
                 } catch (IOException e) {
-                    bot.editMessage("Не удалось создать каталог для хранения пользовательских паков", chatId, messageId);
+                    bot.editMessage("Не удалось создать каталог для хранения пользовательских паков", chatInfo.getChatId(), messageId);
                     e.printStackTrace();
                     return;
                 }
@@ -44,16 +44,16 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Вернуться в меню",
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
-                SigameBot.displays.get(chatId).currentBotState.next(BotStates.PACK_REQUESTED);
+                chatInfo.getGameDisplay().currentBotState.next(BotStates.PACK_REQUESTED);
             }
-            case "base" -> sendPacks(splitData, chatId, messageId, "packs");
-            case "user_pack" -> sendPacks(splitData, chatId, messageId, "userpacks");
+            case "base" -> sendPacks(splitData, chatInfo, messageId, "packs");
+            case "user_pack" -> sendPacks(splitData, chatInfo, messageId, "userpacks");
             case "settings" -> Settings.displaySettingsOptions(display);
             default -> {
                 String path = FilePaths.RESOURCES_DIRECTORY + splitData[1];
-                SoloGame.startNewSoloGame(chatId, Integer.parseInt(splitData[2]),
+                SoloGame.startNewSoloGame(chatInfo, Integer.parseInt(splitData[2]),
                         path,
-                        new TelegramGameDisplay(bot, chatId, messageId));
+                        new TelegramGameDisplay(bot, chatInfo.getChatId(), messageId));
             }
         }
     }
@@ -83,15 +83,15 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         return raw;
     }
 
-    private void sendPacks(String[] splitData, Long chatId, int messageId, String type) {
-        var display = SigameBot.displays.get(chatId);
+    private void sendPacks(String[] splitData, ChatInfo chatInfo, int messageId, String type) {
+        var display = chatInfo.getGameDisplay();
         var packs = FileParser.getAllFilesFromDir(FilePaths.RESOURCES_DIRECTORY + type);
         var page = Integer.parseInt(splitData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         if (packs.size() == 0) {
-            sendErrorMessage(chatId, messageId);
+            sendErrorMessage(chatInfo.getChatId(), messageId);
             return;
         }
 

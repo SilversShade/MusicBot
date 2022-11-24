@@ -1,7 +1,7 @@
 package sigamebot.logic;
 
 public class Player {
-    public String name;
+    public final String name;
     public int score;
     public Game game;
 

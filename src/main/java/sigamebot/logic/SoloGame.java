@@ -3,11 +3,10 @@ package sigamebot.logic;
 import sigamebot.bot.settings.AnswerTimer;
 import sigamebot.logic.scenariologic.Category;
 import sigamebot.ui.gamedisplaying.IGameDisplay;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.JsonParser;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -16,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class SoloGame {
     private final Category scenario;
     private final Player player;
-    private final long chatId;
     private int currentQuestion;
     public final IGameDisplay gameDisplay;
 
@@ -24,23 +22,19 @@ public class SoloGame {
     private final ScheduledExecutorService timer;
     private ScheduledFuture<?> timerSchedulingResult;
 
-    private static final Map<Long, SoloGame> ongoingSoloGames = new HashMap<>();
+    private final ChatInfo chatInfo;
 
-    private SoloGame(long chatId, Category scenario, IGameDisplay gameDisplay) {
+    private SoloGame(ChatInfo chatInfo, Category scenario, IGameDisplay gameDisplay) {
         this.player = new Player("player");
-        this.chatId = chatId;
         this.scenario = scenario;
         this.gameDisplay = gameDisplay;
-        this.answerTimer = new AnswerTimer(chatId);
+        this.chatInfo = chatInfo;
+        this.answerTimer = new AnswerTimer(chatInfo);
         this.timer = Executors.newScheduledThreadPool(1);
         this.currentQuestion = 0;
     }
 
-    public static Map<Long, SoloGame> getOngoingSoloGames() {
-        return ongoingSoloGames;
-    }
-
-    public static void startNewSoloGame(long chatId,
+    public static void startNewSoloGame(ChatInfo chatInfo,
                                         int packNumberInDirectory,
                                         String pathToPackFolder,
                                         IGameDisplay gameDisplay) {
@@ -52,35 +46,31 @@ public class SoloGame {
             return;
         }
 
-        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
-                parsedGame,
-                gameDisplay));
-        SoloGame.getOngoingSoloGames().get(chatId).start();
+        chatInfo.setOngoingSoloGame(new SoloGame(chatInfo, parsedGame, gameDisplay));
+        chatInfo.getOngoingSoloGame().start();
     }
 
-    public static void startNewSoloGame(long chatId,
+    public static void startNewSoloGame(ChatInfo chatInfo,
                                         Category category,
                                         IGameDisplay gameDisplay) {
-        SoloGame.getOngoingSoloGames().put(chatId, new SoloGame(chatId,
-                category,
-                gameDisplay));
-        SoloGame.getOngoingSoloGames().get(chatId).start();
+        chatInfo.setOngoingSoloGame(new SoloGame(chatInfo, category, gameDisplay));
+        chatInfo.getOngoingSoloGame().start();
     }
 
     public void start() {
         this.gameDisplay.displayStartMessage();
     }
 
-    public void finish(long chatId) {
-        ongoingSoloGames.remove(chatId);
+    public void finish() {
+        chatInfo.setOngoingSoloGame(null);
     }
 
     public void nextQuestion(String playerResponse) {
         if (currentQuestion == 0) {
-            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+            this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player, chatInfo.getAnswerTimeInSeconds());
             currentQuestion++;
-            if (AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) != 0)
-                timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
+            if (chatInfo.getAnswerTimeInSeconds() != 0)
+                timerSchedulingResult = timer.schedule(answerTimer, chatInfo.getAnswerTimeInSeconds(), TimeUnit.SECONDS);
             return;
         }
 
@@ -95,13 +85,13 @@ public class SoloGame {
 
         if (currentQuestion == this.scenario.questions.size()) {
             this.gameDisplay.displayEndMessage(player);
-            ongoingSoloGames.get(chatId).finish(chatId);
+            chatInfo.getOngoingSoloGame().finish();
             return;
         }
 
-        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player);
+        this.gameDisplay.updateGameStateView(scenario.questions.get(currentQuestion), this.player, chatInfo.getAnswerTimeInSeconds());
         currentQuestion++;
-        if (AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId) != 0)
-            timerSchedulingResult = timer.schedule(answerTimer, AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId), TimeUnit.SECONDS);
+        if (chatInfo.getAnswerTimeInSeconds() != 0)
+            timerSchedulingResult = timer.schedule(answerTimer, chatInfo.getAnswerTimeInSeconds(), TimeUnit.SECONDS);
     }
 }

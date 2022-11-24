@@ -5,23 +5,24 @@ import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.exceptions.IncorrectSettingsParameterException;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.properties.CommandNames;
 
 public class AnswerTimerSettingsOption implements ISettingsOption {
     @Override
-    public void handleSettingsOption(long chatId) {
-        SigameBot.displays.get(chatId).updateMenuMessage("Введите время, отведенное на ответ (в секундах)." +
+    public void handleSettingsOption(ChatInfo chatInfo) {
+        chatInfo.getGameDisplay().updateMenuMessage("Введите время, отведенное на ответ (в секундах)." +
                 " Введите 0 для отключения ограничения времени на ответ.");
-        SigameBot.displays.get(chatId).currentBotState.next(BotStates.SETTING_UP);
+        chatInfo.getGameDisplay().currentBotState.next(BotStates.SETTING_UP);
         SigameBotState.currentSettingsOption = SettingsOptions.ANSWER_TIMER;
     }
 
     @Override
-    public void processUserResponse(Message userMessage) {
+    public void processUserResponse(Message userMessage, ChatInfo chatInfo) {
         if (userMessage.getText().equals(CommandNames.CANCEL_COMMAND_NAME)) {
-            SigameBot.displays.get(userMessage.getChatId()).currentBotState.next(BotStates.DEFAULT_STATE);
+            chatInfo.getGameDisplay().currentBotState.next(BotStates.DEFAULT_STATE);
             SigameBotState.currentSettingsOption = SettingsOptions.NONE;
-            SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
+            SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatInfo);
             return;
         }
         int timeInSeconds;
@@ -37,10 +38,10 @@ public class AnswerTimerSettingsOption implements ISettingsOption {
         if (timeInSeconds < 0)
             throw new IncorrectSettingsParameterException("Число должно быть неотрицательным");
 
-        AnswerTimer.chatIdToAnswerTimeInSeconds.put(userMessage.getChatId(), timeInSeconds);
+        chatInfo.setAnswerTimeInSeconds(timeInSeconds);
 
-        SigameBot.displays.get(userMessage.getChatId()).currentBotState.next(BotStates.DEFAULT_STATE);
+        chatInfo.getGameDisplay().currentBotState.next(BotStates.DEFAULT_STATE);
         SigameBotState.currentSettingsOption = SettingsOptions.NONE;
-        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
+        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatInfo);
     }
 }

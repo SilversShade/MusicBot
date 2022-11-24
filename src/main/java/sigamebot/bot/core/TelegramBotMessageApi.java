@@ -14,7 +14,7 @@ public abstract class TelegramBotMessageApi extends TelegramLongPollingBot {
 
     public abstract boolean editMessage(String text, long chatId, int messageId, List<List<InlineKeyboardButton>> buttons);
 
-    public abstract int deleteMessage(long chatId, int messageId);
+    public abstract void deleteMessage(long chatId, int messageId);
 
     public static InlineKeyboardButton createInlineKeyboardButton(String text, String callBackData) {
         var button = new InlineKeyboardButton();

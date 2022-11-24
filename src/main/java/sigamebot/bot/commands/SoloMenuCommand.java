@@ -3,6 +3,7 @@ package sigamebot.bot.commands;
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.core.TelegramBotMessageApi;
+import sigamebot.user.ChatInfo;
 import sigamebot.utilities.properties.CallbackPrefix;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.utilities.properties.CommandNames;
@@ -20,9 +21,9 @@ public class SoloMenuCommand extends SigameBotCommand{
         super(command, description, bot);
     }
     @Override
-    public void executeCommand(long chatId) {
-        var display = SigameBot.displays.get(chatId);
-        if (SigameBot.displays.get(chatId).currentBotState.getState() != BotStates.DEFAULT_STATE)
+    public void executeCommand(ChatInfo chatInfo) {
+        var display = chatInfo.getGameDisplay();
+        if (display.currentBotState.getState() != BotStates.DEFAULT_STATE)
             return;
 
         String[] menuOptions = new String[0];
@@ -30,7 +31,7 @@ public class SoloMenuCommand extends SigameBotCommand{
             menuOptions = StreamReader.readFromInputStream(FilePaths.SOLO_MENU_COMMAND_MESSAGE)
                     .split("\r");
         } catch (IOException e) {
-            this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatId);
+            this.bot.sendMessage("Произошла ошибка при исполнении команды.", chatInfo.getChatId());
         }
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         for (String menuOption : menuOptions) {

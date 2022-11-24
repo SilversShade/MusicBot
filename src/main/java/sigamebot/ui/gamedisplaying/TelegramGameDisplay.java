@@ -2,7 +2,6 @@ package sigamebot.ui.gamedisplaying;
 
 import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.TelegramBotMessageApi;
-import sigamebot.bot.settings.AnswerTimer;
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -16,7 +15,7 @@ public class TelegramGameDisplay implements IGameDisplay {
     private final TelegramBotMessageApi bot;
     private final long chatId;
     private int messageId;
-    public SigameBotState currentBotState = new SigameBotState();
+    public final SigameBotState currentBotState = new SigameBotState();
 
     public TelegramGameDisplay(TelegramBotMessageApi bot, long chatId, int messageId) {
         this.bot = bot;
@@ -31,13 +30,12 @@ public class TelegramGameDisplay implements IGameDisplay {
         this.bot.editMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, messageId, buttons);
     }
 
-    private String getAnswerTimeMessage() {
-        var timeForAnswer = AnswerTimer.chatIdToAnswerTimeInSeconds.get(chatId);
-        return timeForAnswer == 0 ? "Время на ответ не ограничено." : "Время на ответ (в секундах): " + timeForAnswer;
+    private String getAnswerTimeMessage(int answerTimeInSeconds) {
+        return answerTimeInSeconds == 0 ? "Время на ответ не ограничено." : "Время на ответ (в секундах): " + answerTimeInSeconds;
     }
 
     @Override
-    public void updateGameStateView(Question currentQuestion, Player player) {
+    public void updateGameStateView(Question currentQuestion, Player player, int answerTimeInSeconds) {
         List<List<InlineKeyboardButton>> answerOptionsButtons = new ArrayList<>();
         for (var i = 0; i < currentQuestion.answerOptions.size(); i++) {
             answerOptionsButtons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton(String.format("%d. %s", i + 1,
@@ -48,7 +46,7 @@ public class TelegramGameDisplay implements IGameDisplay {
                         + "\n\n"
                         + currentQuestion.questionDescription
                         + "\n\n"
-                        + getAnswerTimeMessage()
+                        + getAnswerTimeMessage(answerTimeInSeconds)
                         + "\n\n"
                         + "Текущее количество очков игрока: "
                         + player.score,
