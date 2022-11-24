@@ -12,6 +12,6 @@ public class CancelCommand extends SigameBotCommand{
     @Override
     public void executeCommand(long chatId) {
         SigameBot.displays.get(chatId).currentBotState.next(BotStates.DEFAULT_STATE);
-        SigameBot.commandMap.get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatId);
+        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(chatId);
     }
 }

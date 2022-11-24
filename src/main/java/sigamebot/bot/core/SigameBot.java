@@ -25,10 +25,9 @@ public class SigameBot extends TelegramBotMessageApi {
     private static final String NAME = "SIGame Bot";
 
     private final UpdateProcessor updateProcessor;
-    public static Map<String, SigameBotCommand> commandMap;
-    public static Map<String, ICallbackQueryHandler> queryHandlerMap;
+    private static Map<String, SigameBotCommand> commandMap;
+    private static Map<String, ICallbackQueryHandler> queryHandlerMap;
 
-    //todo:
     public static Map<Long, TelegramGameDisplay> displays;
 
     public SigameBot() {
@@ -54,9 +53,13 @@ public class SigameBot extends TelegramBotMessageApi {
         updateProcessor = new UpdateProcessor(this);
     }
 
+    public static Map<String, SigameBotCommand> getCommandMap() {
+        return commandMap;
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
-        this.updateProcessor.handleReceivedUpdates(update);
+        this.updateProcessor.handleReceivedUpdates(update, queryHandlerMap);
     }
 
     @Override

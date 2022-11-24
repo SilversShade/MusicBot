@@ -31,9 +31,9 @@ public class UpdateProcessor {
     }
 
 
-    public void handleReceivedUpdates(Update update) {
+    public void handleReceivedUpdates(Update update, Map<String, ICallbackQueryHandler> queryHandlerMap) {
         if (update.hasCallbackQuery())
-            processCallbackQuery(update, SigameBot.queryHandlerMap);
+            processCallbackQuery(update, queryHandlerMap);
 
         if (update.hasMessage()) {
             initializeGameDisplayForChat(update.getMessage());
@@ -89,8 +89,8 @@ public class UpdateProcessor {
     }
 
     private void processCommands(@NotNull Message message){
-        if (message.getText() != null && SigameBot.commandMap.containsKey(message.getText())) {
-            SigameBot.commandMap.get(message.getText()).executeCommand(message.getChatId());
+        if (message.getText() != null && SigameBot.getCommandMap().containsKey(message.getText())) {
+            SigameBot.getCommandMap().get(message.getText()).executeCommand(message.getChatId());
             bot.deleteMessage(message.getChatId(), message.getMessageId());
         }
     }

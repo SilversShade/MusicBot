@@ -21,7 +21,7 @@ public class AnswerTimerSettingsOption implements ISettingsOption {
         if (userMessage.getText().equals(CommandNames.CANCEL_COMMAND_NAME)) {
             SigameBot.displays.get(userMessage.getChatId()).currentBotState.next(BotStates.DEFAULT_STATE);
             SigameBotState.currentSettingsOption = SettingsOptions.NONE;
-            SigameBot.commandMap.get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
+            SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
             return;
         }
         int timeInSeconds;
@@ -41,6 +41,6 @@ public class AnswerTimerSettingsOption implements ISettingsOption {
 
         SigameBot.displays.get(userMessage.getChatId()).currentBotState.next(BotStates.DEFAULT_STATE);
         SigameBotState.currentSettingsOption = SettingsOptions.NONE;
-        SigameBot.commandMap.get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
+        SigameBot.getCommandMap().get(CommandNames.SOLO_MENU_COMMAND_NAME).executeCommand(userMessage.getChatId());
     }
 }
