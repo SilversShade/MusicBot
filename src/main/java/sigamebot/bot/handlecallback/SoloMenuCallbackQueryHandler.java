@@ -6,6 +6,7 @@ import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.commands.MenuCommand;
 import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.bot.settings.Settings;
+import sigamebot.bot.testbuilder.SoloTestBuilder;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.user.ChatInfo;
@@ -45,6 +46,11 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                         CallbackPrefix.MENU + " " + CommandNames.CANCEL_COMMAND_NAME)));
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
                 chatInfo.getGameDisplay().currentBotState.next(BotStates.PACK_REQUESTED);
+            }
+            case "create_game" ->{
+                display.soloTestBuilder = new SoloTestBuilder();
+                display.currentBotState.next(BotStates.TEST_DESIGN);
+                display.updateMenuMessage(display.soloTestBuilder.nextStep(""));
             }
             case "base" -> sendPacks(splitData, chatInfo, messageId, "packs");
             case "user_pack" -> sendPacks(splitData, chatInfo, messageId, "userpacks");

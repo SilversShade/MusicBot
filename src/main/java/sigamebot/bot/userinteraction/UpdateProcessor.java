@@ -2,6 +2,7 @@ package sigamebot.bot.userinteraction;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.SigameBot;
@@ -13,9 +14,11 @@ import sigamebot.exceptions.IncorrectSettingsParameterException;
 import sigamebot.exceptions.UserPackHandlerException;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
 import sigamebot.user.ChatInfo;
+import sigamebot.utilities.properties.CallbackPrefix;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UpdateProcessor {
@@ -34,6 +37,11 @@ public class UpdateProcessor {
                 && Settings.userResponseDelegator.containsKey(SigameBotState.currentSettingsOption);
     }
 
+    private boolean isBotBuilding(Message message) {
+        return chatInfoMap.containsKey(message.getChatId())
+                && chatInfoMap.get(message.getChatId()).getGameDisplay().currentBotState.getState() == BotStates.TEST_DESIGN;
+    }
+
 
     public void handleReceivedUpdates(Update update, Map<String, ICallbackQueryHandler> queryHandlerMap) {
         if (update.hasCallbackQuery())
@@ -41,7 +49,7 @@ public class UpdateProcessor {
 
         if (update.hasMessage()) {
             initializeChatInfo(update.getMessage());
-            processMessage(update.getMessage());
+            processMessage(update.getMessage(), queryHandlerMap);
         }
     }
 
@@ -57,6 +65,15 @@ public class UpdateProcessor {
         }
     }
 
+    private void processBuilder(@NotNull Message message, Map<String, ICallbackQueryHandler> queryHandlerMap) {
+        if (isBotBuilding(message)) {
+            queryHandlerMap.get(CallbackPrefix.SOLO_BUILDER).handleCallbackQuery(
+                    CallbackPrefix.SOLO_BUILDER + " " + message.getText(), message.getMessageId(),
+                    chatInfoMap.get(message.getChatId()));
+            bot.deleteMessage(message.getChatId(), message.getMessageId());
+        }
+    }
+
     private void initializeChatInfo(@NotNull Message message) {
         if (!chatInfoMap.containsKey(message.getChatId())) {
             var messageId = bot.sendMessage("Start message", message.getChatId());
@@ -64,8 +81,10 @@ public class UpdateProcessor {
                     new ChatInfo(message.getChatId(), new TelegramGameDisplay(bot, message.getChatId(), messageId)));
         }
     }
-    private void processMessage(@NotNull Message message) {
+
+    private void processMessage(@NotNull Message message, Map<String, ICallbackQueryHandler> queryHandlerMap) {
         processSettingsAdjustment(message);
+        processBuilder(message, queryHandlerMap);
         processCommands(message);
         processDocuments(message);
     }
@@ -82,7 +101,7 @@ public class UpdateProcessor {
     }
 
     private void processCallbackQuery(Update update,
-                                             Map<String, ICallbackQueryHandler> queryHandlerMap) {
+                                      Map<String, ICallbackQueryHandler> queryHandlerMap) {
         var callData = update.getCallbackQuery().getData();
         var messageId = update.getCallbackQuery().getMessage().getMessageId();
         var chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -93,7 +112,7 @@ public class UpdateProcessor {
 
     }
 
-    private void processCommands(@NotNull Message message){
+    private void processCommands(@NotNull Message message) {
         if (message.getText() != null && SigameBot.getCommandMap().containsKey(message.getText())) {
             SigameBot.getCommandMap().get(message.getText()).executeCommand(chatInfoMap.get(message.getChatId()));
             bot.deleteMessage(message.getChatId(), message.getMessageId());

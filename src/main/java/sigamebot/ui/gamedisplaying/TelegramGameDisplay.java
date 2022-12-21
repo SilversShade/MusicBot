@@ -2,6 +2,7 @@ package sigamebot.ui.gamedisplaying;
 
 import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.TelegramBotMessageApi;
+import sigamebot.bot.testbuilder.SoloTestBuilder;
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -15,7 +16,8 @@ public class TelegramGameDisplay implements IGameDisplay {
     private final TelegramBotMessageApi bot;
     private final long chatId;
     private int messageId;
-    public final SigameBotState currentBotState = new SigameBotState();
+    public SigameBotState currentBotState = new SigameBotState();
+    public SoloTestBuilder soloTestBuilder = new SoloTestBuilder();
 
     public TelegramGameDisplay(TelegramBotMessageApi bot, long chatId, int messageId) {
         this.bot = bot;

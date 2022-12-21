@@ -1,8 +1,10 @@
 package sigamebot.bot.core;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -43,7 +45,9 @@ public class SigameBot extends TelegramBotMessageApi {
                 CallbackPrefix.SOLO_MENU,
                 new SoloMenuCallbackQueryHandler(this),
                 CallbackPrefix.SETTINGS,
-                new SettingsCallbackQueryHandler());
+                new SettingsCallbackQueryHandler(),
+                CallbackPrefix.SOLO_BUILDER,
+                new SoloTestBuilderCallbackQueryHandler());
     }
 
     public static Map<String, SigameBotCommand> getCommandMap() {
@@ -75,7 +79,17 @@ public class SigameBot extends TelegramBotMessageApi {
         }
 
     }
+    public int sendDocument(InputFile document, long chatId) {
 
+        SendDocument message = new SendDocument();
+        message.setChatId(chatId);
+        message.setDocument(document);
+        try {
+            return execute(message).getMessageId();
+        } catch (TelegramApiException e) {
+            return -1;
+        }
+    }
     public int sendMessage(String text, long chatId, List<List<InlineKeyboardButton>> buttons) {
         SendMessage message = createSendMessageObject(text, chatId);
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
@@ -105,7 +119,7 @@ public class SigameBot extends TelegramBotMessageApi {
         keyboard.setKeyboard(buttons);
         message.setReplyMarkup(keyboard);
         try {
-            execute(message);
+            var abc = execute(message);
             return true;
         } catch (TelegramApiException e) {
             return false;

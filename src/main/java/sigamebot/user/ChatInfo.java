@@ -8,7 +8,6 @@ public class ChatInfo {
     private final long chatId;
     private int answerTimeInSeconds = AnswerTimer.DEFAULT_ANSWER_TIME_IN_SECONDS;
     private final TelegramGameDisplay gameDisplay;
-
     private SoloGame ongoingSoloGame;
 
     public ChatInfo(long chatId, TelegramGameDisplay gameDisplay) {

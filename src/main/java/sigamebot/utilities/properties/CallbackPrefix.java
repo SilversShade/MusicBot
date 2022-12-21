@@ -10,4 +10,5 @@ public class CallbackPrefix {
     public static final String SOLO_GAME = resourceBundle.getString("solo_game");
     public static final String SOLO_MENU = resourceBundle.getString("solo_menu");
     public static final String SETTINGS = resourceBundle.getString("settings");
+    public static final String SOLO_BUILDER = resourceBundle.getString("solo_builder");
 }

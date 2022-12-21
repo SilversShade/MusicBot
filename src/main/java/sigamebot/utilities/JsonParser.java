@@ -15,4 +15,7 @@ public class JsonParser {
         var tests = FileParser.getAllFilesFromDir(pathToFolder);
         return GSON.fromJson(readFromInputStream(tests.get(gameNumberInFolder).getPath()), Category.class);
     }
+    public static String getJsonFromGame(Category game){
+        return GSON.toJson(game);
+    }
 }
