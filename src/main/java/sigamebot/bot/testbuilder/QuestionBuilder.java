@@ -5,7 +5,9 @@ import sigamebot.bot.botstate.QuestionBuilderStates;
 import sigamebot.logic.scenariologic.Question;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Random;
 
 public class QuestionBuilder {
     public QuestionBuilderStates state;
@@ -15,12 +17,18 @@ public class QuestionBuilder {
     private int questionCost;
     private ArrayList<String> answerOption;
     private String correctAnswer;
-    private AnswerBuilder answerBuilder;
+    private AnswerBuilder answerBuilder = new AnswerBuilder();
     public QuestionBuilder(){
         state = QuestionBuilderStates.NONE;
         answerOption = new ArrayList<>();
         questions = new ArrayList<>();
     }
+
+    public QuestionBuilder(AnswerBuilder answerBuilder) {
+        this();
+        this.answerBuilder = answerBuilder;
+    }
+
     public String getText(String text){
         switch(state){
             case NONE ->{
@@ -40,21 +48,21 @@ public class QuestionBuilder {
             case COST -> {
                 questionCost = tryToParse(text);
                 state = QuestionBuilderStates.ANSWER;
-                answerBuilder = new AnswerBuilder();
                 return answerBuilder.getText(text);
             }
             case ANSWER -> {
                 String re = answerBuilder.getText(text);
                 if(answerBuilder.state == AnswerBuilderStates.NONE){
                     answerOption = answerBuilder.getAnswerOption();
+                    Collections.shuffle(answerOption, new Random(System.nanoTime()));
                     correctAnswer = answerBuilder.getCorrectAnswer();
                     state = QuestionBuilderStates.END;
                     return re;
                 }
                 return re;
             }
-            case END ->{
-                if (Objects.equals(text.toLowerCase(), "нет")) {
+            case END -> {
+                if ("нет".equalsIgnoreCase(text)) {
                     state = QuestionBuilderStates.NONE;
                     questions.add(new Question(questionCost, questionTitle, questionDesc, answerOption, correctAnswer));
                     return "Тест создан";
@@ -62,8 +70,10 @@ public class QuestionBuilder {
                 state = QuestionBuilderStates.TITLE;
                 return "Введите название вопроса";
             }
+            default -> {
+                return "Необработанное состояние";
+            }
         }
-        return "";
     }
     public ArrayList<String> getButtons(){
         ArrayList<String> re = new ArrayList<>();
@@ -79,11 +89,11 @@ public class QuestionBuilder {
     public ArrayList<Question> getQuestions(){
         return questions;
     }
-    private int tryToParse(String text){
+    public int tryToParse(String text){
         try{
             return Integer.parseInt(text);
         }
-        catch (Exception e){
+        catch (NumberFormatException e) {
             return 100;
         }
     }

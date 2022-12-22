@@ -3,11 +3,14 @@ package sigamebot.bot.testbuilder;
 import sigamebot.bot.botstate.AnswerBuilderStates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class AnswerBuilder {
-    private ArrayList<String> answerOption;
+    private final ArrayList<String> answerOption;
     public AnswerBuilderStates state;
     private String correctAnswer;
 
@@ -34,15 +37,17 @@ public class AnswerBuilder {
                 return "Вы хотите добавить еще один ответ?";
             }
             case END -> {
-                if (Objects.equals(text.toLowerCase(), "нет")) {
+                if ("нет".equalsIgnoreCase(text)) {
                     state = AnswerBuilderStates.NONE;
                     return "Вы хотите добавить еще один вопрос?";
                 }
                 state = AnswerBuilderStates.ANSWER;
                 return "Введите неверный ответ";
             }
+            default -> {
+                return "Необработанное состояние";
+            }
         }
-        return "";
     }
     public ArrayList<String> getButtons(){
         if(state == AnswerBuilderStates.END){
@@ -54,23 +59,9 @@ public class AnswerBuilder {
         return new ArrayList<>();
     }
     public ArrayList<String> getAnswerOption() {
-        ArrayList<String> newList = new ArrayList<>();
-        var indices = range(answerOption.size());
-        Random random = new Random();
-        for (int i = 0; i < answerOption.size(); i++) {
-            int index = random.nextInt(indices.size());
-            newList.add(answerOption.get(index));
-            indices.remove(index);
-        }
-        return newList;
+        return answerOption;
     }
     public String getCorrectAnswer() {
         return correctAnswer;
-    }
-    private ArrayList<Integer> range(int max) {
-        ArrayList<Integer> re = new ArrayList<>();
-        for (int i = 0; i < max; i++)
-            re.add(i);
-        return re;
     }
 }

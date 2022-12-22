@@ -1,6 +1,6 @@
 package sigamebot.bot.botstate;
 
-public enum AnswerBuilderStates {
+public enum AnswerBuilderStates implements IState {
     CORRECT,
     ANSWER,
     END,

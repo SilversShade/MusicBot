@@ -12,7 +12,7 @@ public class SoloTestBuilder {
     private ArrayList<Question> questions;
     private String name;
     private Category soloGame;
-    private QuestionBuilder questionBuilder;
+    private final QuestionBuilder questionBuilder;
     public SoloTestBuilder(){
         questions = new ArrayList<>();
         questionBuilder = new QuestionBuilder();
@@ -27,7 +27,6 @@ public class SoloTestBuilder {
             case CATEGORY -> {
                 name = text;
                 state = BuilderStates.QUESTION;
-                questionBuilder = new QuestionBuilder();
                 return questionBuilder.getText(text);
             }
             case QUESTION -> {
@@ -42,9 +41,12 @@ public class SoloTestBuilder {
             case FINISH -> {
                 questions = new ArrayList<>();
                 state = BuilderStates.DEFAULT_STATE;
+                return "";
+            }
+            default -> {
+                return "Необработанное состояние";
             }
         }
-        return "";
     }
     public ArrayList<String> getButtons(){
         return questionBuilder.getButtons();
