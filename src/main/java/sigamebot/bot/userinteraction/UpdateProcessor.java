@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import sigamebot.bot.botstate.BotStates;
 import sigamebot.bot.botstate.classes.SigameBotState;
+import sigamebot.bot.commands.AdminCommand;
 import sigamebot.bot.core.SigameBot;
 import sigamebot.bot.core.TelegramBotMessageApi;
 import sigamebot.bot.handlecallback.ICallbackQueryHandler;
@@ -20,6 +21,7 @@ import sigamebot.utilities.properties.CallbackPrefix;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class UpdateProcessor {
 
@@ -130,9 +132,25 @@ public class UpdateProcessor {
             queryHandlerMap.get(callbackPrefix).handleCallbackQuery(callData, messageId, chatInfoMap.get(chatId));
     }
 
-    private void processCommands(@NotNull Message message) {
-        if (message.getText() != null && SigameBot.getCommandMap().containsKey(message.getText())) {
-            SigameBot.getCommandMap().get(message.getText()).executeCommand(chatInfoMap.get(message.getChatId()));
+    private void processCommands(Message message) {
+        var text = message.getText();
+
+        if (text.startsWith("/admin")) {
+            var parsed = text.split(" ");
+            if (parsed.length != 2) {
+                this.bot.sendMessage("Команда /admin должна принимать ключ доступа первым аргументом.", message.getChatId());
+                return;
+            }
+            if (!Objects.equals(parsed[1], AdminCommand.adminAccessKey)) {
+                this.bot.sendMessage("Неверный ключ доступа.", message.getChatId());
+                return;
+            }
+
+            text = "/admin";
+        }
+
+        if (SigameBot.getCommandMap().containsKey(text)) {
+            SigameBot.getCommandMap().get(text).executeCommand(chatInfoMap.get(message.getChatId()));
             bot.deleteMessage(message.getChatId(), message.getMessageId());
         }
     }

@@ -36,7 +36,9 @@ public class SigameBot extends TelegramBotMessageApi {
                 CommandNames.MENU_COMMAND_NAME,
                 new MenuCommand(CommandNames.MENU_COMMAND_NAME, "Меню игры", this),
                 CommandNames.CANCEL_COMMAND_NAME,
-                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Отмена текущего действия, возврат в главное меню", this));
+                new CancelCommand(CommandNames.CANCEL_COMMAND_NAME, "Отмена текущего действия, возврат в главное меню", this),
+                CommandNames.ADMIN_COMMAND_NAME,
+                new AdminCommand(CommandNames.ADMIN_COMMAND_NAME, "Проверка результатов тестов", this));
 
         queryHandlerMap = Map.of(CallbackPrefix.MENU,
                 new MenuCallbackQueryHandler(this),
