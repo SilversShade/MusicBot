@@ -3,6 +3,7 @@ package sigamebot.logic;
 import sigamebot.bot.settings.AnswerTimer;
 import sigamebot.logic.scenariologic.Category;
 import sigamebot.ui.gamedisplaying.IGameDisplay;
+import sigamebot.user.Admin;
 import sigamebot.user.ChatInfo;
 import sigamebot.utilities.JsonParser;
 
@@ -62,6 +63,7 @@ public class SoloGame {
     }
 
     public void finish() {
+        Admin.results.add(new TestResult(Admin.lastNickname, Admin.lastGameName, player.score));
         chatInfo.setOngoingSoloGame(null);
     }
 

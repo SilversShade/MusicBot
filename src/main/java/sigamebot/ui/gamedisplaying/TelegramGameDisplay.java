@@ -2,6 +2,7 @@ package sigamebot.ui.gamedisplaying;
 
 import sigamebot.bot.botstate.classes.SigameBotState;
 import sigamebot.bot.core.TelegramBotMessageApi;
+import sigamebot.bot.handlecallback.SoloGameCallbackQueryHandler;
 import sigamebot.bot.testbuilder.SoloTestBuilder;
 import sigamebot.logic.Player;
 import sigamebot.logic.scenariologic.Question;
@@ -18,6 +19,8 @@ public class TelegramGameDisplay implements IGameDisplay {
     private int messageId;
     public SigameBotState currentBotState = new SigameBotState();
     public SoloTestBuilder soloTestBuilder = new SoloTestBuilder();
+
+    public static boolean isAwaitingNickname = false;
 
     public TelegramGameDisplay(TelegramBotMessageApi bot, long chatId, int messageId) {
         this.bot = bot;
@@ -79,5 +82,12 @@ public class TelegramGameDisplay implements IGameDisplay {
                 chatId,
                 messageId,
                 buttons);
+        SoloGameCallbackQueryHandler.nicknameReceived = false;
+    }
+
+    @Override
+    public void requestNickname() {
+        isAwaitingNickname = true;
+        this.bot.editMessage("Введите Ваш никнейм.", chatId, messageId);
     }
 }

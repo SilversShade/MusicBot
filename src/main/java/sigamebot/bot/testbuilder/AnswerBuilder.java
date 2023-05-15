@@ -3,11 +3,6 @@ package sigamebot.bot.testbuilder;
 import sigamebot.bot.botstate.AnswerBuilderStates;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class AnswerBuilder {
     private final ArrayList<String> answerOption;

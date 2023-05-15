@@ -6,19 +6,19 @@ import sigamebot.logic.scenariologic.Question;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Random;
 
 public class QuestionBuilder {
     public QuestionBuilderStates state;
-    private ArrayList<Question> questions;
+    private final ArrayList<Question> questions;
     private String questionTitle;
     private String questionDesc;
     private int questionCost;
     private ArrayList<String> answerOption;
     private String correctAnswer;
     private AnswerBuilder answerBuilder = new AnswerBuilder();
-    public QuestionBuilder(){
+
+    public QuestionBuilder() {
         state = QuestionBuilderStates.NONE;
         answerOption = new ArrayList<>();
         questions = new ArrayList<>();
@@ -29,9 +29,9 @@ public class QuestionBuilder {
         this.answerBuilder = answerBuilder;
     }
 
-    public String getText(String text){
-        switch(state){
-            case NONE ->{
+    public String getText(String text) {
+        switch (state) {
+            case NONE -> {
                 state = QuestionBuilderStates.TITLE;
                 return "Введите название вопроса";
             }
@@ -52,12 +52,11 @@ public class QuestionBuilder {
             }
             case ANSWER -> {
                 String re = answerBuilder.getText(text);
-                if(answerBuilder.state == AnswerBuilderStates.NONE){
+                if (answerBuilder.state == AnswerBuilderStates.NONE) {
                     answerOption = answerBuilder.getAnswerOption();
                     Collections.shuffle(answerOption, new Random(System.nanoTime()));
                     correctAnswer = answerBuilder.getCorrectAnswer();
                     state = QuestionBuilderStates.END;
-                    return re;
                 }
                 return re;
             }
@@ -75,10 +74,10 @@ public class QuestionBuilder {
             }
         }
     }
-    public ArrayList<String> getButtons(){
+
+    public ArrayList<String> getButtons() {
         ArrayList<String> re = new ArrayList<>();
-        if(state == QuestionBuilderStates.END)
-        {
+        if (state == QuestionBuilderStates.END) {
             re.add("нет");
             re.add("да");
         } else if (state == QuestionBuilderStates.ANSWER) {
@@ -86,14 +85,15 @@ public class QuestionBuilder {
         }
         return re;
     }
-    public ArrayList<Question> getQuestions(){
+
+    public ArrayList<Question> getQuestions() {
         return questions;
     }
-    public int tryToParse(String text){
-        try{
+
+    public int tryToParse(String text) {
+        try {
             return Integer.parseInt(text);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return 100;
         }
     }

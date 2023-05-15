@@ -9,6 +9,7 @@ import sigamebot.bot.settings.Settings;
 import sigamebot.bot.testbuilder.SoloTestBuilder;
 import sigamebot.logic.SoloGame;
 import sigamebot.ui.gamedisplaying.TelegramGameDisplay;
+import sigamebot.user.Admin;
 import sigamebot.user.ChatInfo;
 import sigamebot.utilities.FileParser;
 import sigamebot.utilities.properties.CallbackPrefix;
@@ -27,6 +28,8 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
     public SoloMenuCallbackQueryHandler(TelegramBotMessageApi bot) {
         this.bot = bot;
     }
+
+    private static String packsChosen;
 
     @Override
     public void handleCallbackQuery(String callData, Integer messageId, ChatInfo chatInfo) {
@@ -47,7 +50,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
                 display.updateMenuMessage("Отправьте Ваш пак", buttons);
                 chatInfo.getGameDisplay().currentBotState.next(BotStates.PACK_REQUESTED);
             }
-            case "create_game" ->{
+            case "create_game" -> {
                 display.soloTestBuilder = new SoloTestBuilder();
                 display.currentBotState.next(BotStates.TEST_DESIGN);
                 display.updateMenuMessage(display.soloTestBuilder.nextStep(""));
@@ -56,7 +59,13 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             case "user_pack" -> sendPacks(splitData, chatInfo, messageId, "userpacks");
             case "settings" -> Settings.displaySettingsOptions(display);
             default -> {
-                String path = FilePaths.RESOURCES_DIRECTORY + splitData[1];
+                String path = FilePaths.RESOURCES_DIRECTORY + splitData[1]; // packs or userpacks
+
+                if (packsChosen.equals("packs"))
+                    Admin.lastGameName = Admin.packsIdToName.get(Integer.parseInt(splitData[2]));
+                else if (packsChosen.equals("userpacks"))
+                    Admin.lastGameName = Admin.userpacksIdToName.get(Integer.parseInt(splitData[2]));
+
                 SoloGame.startNewSoloGame(chatInfo, Integer.parseInt(splitData[2]),
                         path,
                         new TelegramGameDisplay(bot, chatInfo.getChatId(), messageId));
@@ -92,6 +101,20 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
     private void sendPacks(String[] splitData, ChatInfo chatInfo, int messageId, String type) {
         var display = chatInfo.getGameDisplay();
         var packs = FileParser.getAllFilesFromDir(FilePaths.RESOURCES_DIRECTORY + type);
+
+        for (var i = 0; i < packs.size(); i++) {
+            var filename = FilenameUtils.removeExtension(packs.get(i).getName());
+
+            if (type.equals("packs")) {
+                Admin.packsIdToName.put(i, filename);
+                packsChosen = "packs";
+            }
+            else {
+                Admin.userpacksIdToName.put(i, filename);
+                packsChosen = "userpacks";
+            }
+        }
+
         var page = Integer.parseInt(splitData[2]);
         var maxPage = packs.size() / 5 + (packs.size() % 5 > 0 ? 1 : 0);
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();

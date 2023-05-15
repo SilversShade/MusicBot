@@ -12,4 +12,6 @@ public interface IGameDisplay {
     void updateMenuMessage(String text, List<List<InlineKeyboardButton>> buttons);
     void updateMenuMessage(String text);
     void displayEndMessage(Player player);
+
+    void requestNickname();
 }
