@@ -22,7 +22,7 @@ public class SoloTestBuilder {
         switch (state){
             case DEFAULT_STATE -> {
                 state = BuilderStates.CATEGORY;
-                return "Введите название игры";
+                return "Введите название теста";
             }
             case CATEGORY -> {
                 name = text;

@@ -43,7 +43,7 @@ public class QuestionBuilder {
             case DESC -> {
                 questionDesc = text;
                 state = QuestionBuilderStates.COST;
-                return "Введите цену вопроса";
+                return "Введите количество баллов за вопрос";
             }
             case COST -> {
                 questionCost = tryToParse(text);

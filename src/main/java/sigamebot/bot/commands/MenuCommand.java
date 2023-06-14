@@ -47,7 +47,7 @@ public class MenuCommand extends SigameBotCommand{
             buttons.add(List.of(button));
         }
 
-        display.updateMenuMessage("Меню игры:", buttons);
+        display.updateMenuMessage("Меню:", buttons);
     }
 
 }

@@ -41,7 +41,7 @@ public class SoloMenuCommand extends SigameBotCommand{
         var button = TelegramBotMessageApi.createInlineKeyboardButton("Назад",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME);
         buttons.add(List.of(button));
-        display.updateMenuMessage("Одиночная игра", buttons);
+        display.updateMenuMessage("Меню бота", buttons);
     }
 
 }

@@ -83,7 +83,7 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Вернуться в меню",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME)));
-        bot.editMessage("Ошибка, игры не найдены. Выберите опцию \"Добавить свою игру\".",
+        bot.editMessage("Ошибка, тесты не найдены. Выберите опцию \"Добавить свой тест\".",
                 chatId, messageId, buttons);
     }
 
@@ -133,6 +133,6 @@ public class SoloMenuCallbackQueryHandler implements ICallbackQueryHandler {
             buttons.add(createNavigationInterface(page, maxPage));
 
         buttons.add(MenuCommand.BACK_BUTTON);
-        display.updateMenuMessage("Выберите текст", buttons);
+        display.updateMenuMessage("Выберите тест", buttons);
     }
 }

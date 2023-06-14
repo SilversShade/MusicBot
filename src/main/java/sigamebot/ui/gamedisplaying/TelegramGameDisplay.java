@@ -32,7 +32,7 @@ public class TelegramGameDisplay implements IGameDisplay {
     public void displayStartMessage() {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(TelegramBotMessageApi.createInlineKeyboardButton("Начать", CallbackPrefix.SOLO_GAME + " start")));
-        this.bot.editMessage("Нажмите кнопку \"Начать\" для старта игры.", chatId, messageId, buttons);
+        this.bot.editMessage("Нажмите кнопку \"Начать\" для старта теста.", chatId, messageId, buttons);
     }
 
     private String getAnswerTimeMessage(int answerTimeInSeconds) {
@@ -53,7 +53,7 @@ public class TelegramGameDisplay implements IGameDisplay {
                         + "\n\n"
                         + getAnswerTimeMessage(answerTimeInSeconds)
                         + "\n\n"
-                        + "Текущее количество очков игрока: "
+                        + "Текущее количество очков пользователя: "
                         + player.score,
                 chatId,
                 messageId,
@@ -78,7 +78,7 @@ public class TelegramGameDisplay implements IGameDisplay {
         var button = TelegramBotMessageApi.createInlineKeyboardButton("Вернуться в меню",
                 CallbackPrefix.MENU + " " + CommandNames.MENU_COMMAND_NAME);
         buttons.add(List.of(button));
-        this.bot.editMessage("Игра окончена. Финальный счёт игрока: " + player.score,
+        this.bot.editMessage("Тест окончен. Количество набранных баллов: " + player.score,
                 chatId,
                 messageId,
                 buttons);
